@@ -1,6 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ imovel.titulo }} · {{ block.super }}{% endblock %}
+{% block meta_description %}{{ imovel.titulo }} em {{ imovel.bairro }}, {{ imovel.cidade }} — {{ imovel.quartos }} quarto(s), R$ {{ imovel.valor }}.{% endblock %}
 
 {% block content %}
 <section class="container">
@@ -8,17 +10,33 @@
     {{ imovel.get_status_display }}
   </span>
   <h1>{{ imovel.titulo }}</h1>
-  <p>{{ imovel.bairro }}, {{ imovel.cidade }} · Ref. {{ imovel.codigo_referencia }}</p>
+  <p style="color: var(--cor-texto-suave);">{{ imovel.bairro }}, {{ imovel.cidade }} · Ref. {{ imovel.codigo_referencia }}</p>
 
-  <div class="grid">
-    {% for foto in imovel.fotos.all %}
-      <img src="{{ foto.imagem.url }}" alt="{{ foto.legenda }}" style="border-radius: 10px;">
-    {% empty %}
-      <div class="card-img-placeholder">Sem fotos cadastradas</div>
-    {% endfor %}
+  {% with fotos=imovel.fotos.all %}
+    {% if fotos %}
+      <div class="galeria-principal" id="galeria-principal" data-index="0">
+        <img id="galeria-imagem-atual" src="{{ fotos.0.imagem.url }}" alt="{{ fotos.0.legenda|default:imovel.titulo }}">
+      </div>
+      {% if fotos|length > 1 %}
+        <div class="galeria-miniaturas" id="galeria-miniaturas">
+          {% for foto in fotos %}
+            <img src="{{ foto.imagem.url }}" alt="{{ foto.legenda|default:imovel.titulo }}" data-index="{{ forloop.counter0 }}" class="{% if forloop.first %}ativa{% endif %}">
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="card-img-placeholder" style="height: 320px; border-radius: var(--raio-lg);">Sem fotos cadastradas</div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-fechar" id="lightbox-fechar" aria-label="Fechar">✕</button>
+    <button class="lightbox-prev" id="lightbox-prev" aria-label="Foto anterior">‹</button>
+    <img id="lightbox-imagem" src="" alt="">
+    <button class="lightbox-next" id="lightbox-next" aria-label="Próxima foto">›</button>
   </div>
 
-  <h2 class="preco">R$ {{ imovel.valor }}</h2>
+  <h2 class="preco" style="margin-top: 28px;">R$ {{ imovel.valor }}</h2>
   <p>
     {{ imovel.quartos }} quarto(s) · {{ imovel.suites }} suíte(s) ·
     {{ imovel.banheiros }} banheiro(s) · {{ imovel.vagas_garagem }} vaga(s) ·
@@ -29,7 +47,7 @@
   {% if imovel.latitude and imovel.longitude %}
     <h3>Localização</h3>
     <iframe
-      width="100%" height="320" style="border:0; border-radius: 10px;"
+      width="100%" height="320" style="border:0; border-radius: var(--raio-lg);"
       loading="lazy"
       src="https://www.google.com/maps?q={{ imovel.latitude }},{{ imovel.longitude }}&output=embed">
     </iframe>
@@ -41,4 +59,8 @@
     </a>
   </p>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/galeria.js' %}" defer></script>
 {% endblock %}

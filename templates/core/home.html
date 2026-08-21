@@ -1,22 +1,49 @@
 {% extends "base.html" %}
+{% load l10n %}
 
 {% block content %}
 <section class="hero">
   <div class="container">
-    <h1>{{ perfil.nome|default:"Encontre o imóvel certo com quem conhece a região" }}</h1>
-    <p>{{ perfil.bio|default:"Atendimento próximo, do primeiro contato até a entrega das chaves." }}</p>
-    <a href="{% url 'imoveis:vitrine' %}" class="btn btn-primary">Ver imóveis disponíveis</a>
+    <span class="kicker">{% if perfil.creci %}{{ perfil.creci }}{% else %}Corretora independente{% endif %}</span>
+    <h1>Encontre o imóvel <em>certo</em> com quem conhece a região</h1>
+    <p>{{ perfil.bio|default:"Atendimento próximo, do primeiro contato até a entrega das chaves — com transparência em cada etapa da negociação." }}</p>
+    <div class="hero-acoes">
+      <a href="{% url 'imoveis:vitrine' %}" class="btn btn-primary">Ver imóveis disponíveis</a>
+      {% if perfil.whatsapp %}
+        <a href="{{ perfil.whatsapp_link }}" target="_blank" rel="noopener" class="btn btn-whatsapp">Falar agora no WhatsApp</a>
+      {% endif %}
+    </div>
+
+    <div class="stats">
+      <div class="reveal">
+        <div class="stat-num"><span data-contador="{{ total_fechados|unlocalize }}">0</span>+</div>
+        <div class="stat-label">Negócios fechados</div>
+      </div>
+      <div class="reveal reveal-atraso-1">
+        <div class="stat-num"><span data-contador="{{ total_disponiveis|unlocalize }}">0</span></div>
+        <div class="stat-label">Imóveis disponíveis agora</div>
+      </div>
+      <div class="reveal reveal-atraso-2">
+        <div class="stat-num"><span data-contador="{{ total_cidades|unlocalize }}">0</span></div>
+        <div class="stat-label">Cidades atendidas</div>
+      </div>
+      <div class="reveal reveal-atraso-3">
+        <div class="stat-num"><span data-contador="{{ total_depoimentos|unlocalize }}">0</span></div>
+        <div class="stat-label">Clientes satisfeitos</div>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="container">
-  <h2>Imóveis em destaque</h2>
+<section id="destaques" class="container">
+  <span class="kicker reveal">Seleção da corretora</span>
+  <h2 class="reveal">Imóveis em destaque</h2>
   <div class="grid">
     {% for imovel in imoveis_destaque %}
-      <a class="card" href="{{ imovel.get_absolute_url }}">
+      <a class="card reveal {% cycle 'reveal-atraso-1' 'reveal-atraso-2' 'reveal-atraso-3' %}" href="{{ imovel.get_absolute_url }}">
         {% with imovel.fotos.first as capa %}
           {% if capa %}
-            <img src="{{ capa.imagem.url }}" alt="{{ imovel.titulo }}">
+            <img src="{{ capa.imagem.url }}" alt="{{ imovel.titulo }}" loading="lazy">
           {% else %}
             <div class="card-img-placeholder">Sem foto</div>
           {% endif %}
@@ -35,11 +62,12 @@
 </section>
 
 <section id="realizacoes" class="container">
-  <h2>Negócios fechados recentemente</h2>
+  <span class="kicker reveal">Histórico recente</span>
+  <h2 class="reveal">Negócios fechados recentemente</h2>
   <div class="grid">
     {% for r in realizacoes %}
-      <div class="card">
-        <img src="{{ r.foto.url }}" alt="{{ r.titulo }}">
+      <div class="card reveal">
+        <img src="{{ r.foto.url }}" alt="{{ r.titulo }}" loading="lazy">
         <div class="card-body">
           <h3>{{ r.titulo }}</h3>
           <p>{{ r.texto }}</p>
@@ -51,13 +79,23 @@
   </div>
 </section>
 
+<section id="sobre" class="container">
+  <span class="kicker reveal">Sobre a corretora</span>
+  <h2 class="reveal">{{ perfil.nome|default:"Corretora de Milhões" }}</h2>
+  <p class="reveal" style="max-width: 680px; color: var(--cor-texto-suave);">
+    {{ perfil.bio|default:"Cadastre a bio da corretora pelo painel para personalizar esta seção." }}
+    {% if perfil.regiao_atuacao %}<br><br><strong>Região de atuação:</strong> {{ perfil.regiao_atuacao }}{% endif %}
+  </p>
+</section>
+
 <section class="container">
-  <h2>O que os clientes dizem</h2>
+  <span class="kicker reveal">Depoimentos</span>
+  <h2 class="reveal">O que os clientes dizem</h2>
   <div class="grid">
     {% for d in depoimentos %}
-      <div class="card">
+      <div class="card reveal">
         <div class="card-body">
-          <p>{{ d.estrelas }}</p>
+          <p style="color: var(--cor-dourado); letter-spacing: 2px;">{{ d.estrelas }}</p>
           <p>"{{ d.texto }}"</p>
           <p><strong>{{ d.nome_cliente }}</strong></p>
         </div>

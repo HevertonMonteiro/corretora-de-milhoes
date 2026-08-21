@@ -1,0 +1,21 @@
+{% for imovel in imoveis %}
+  <a class="card reveal is-visible" href="{{ imovel.get_absolute_url }}">
+    {% with imovel.fotos.first as capa %}
+      {% if capa %}
+        <img src="{{ capa.imagem.url }}" alt="{{ imovel.titulo }}" loading="lazy">
+      {% else %}
+        <div class="card-img-placeholder">Sem foto</div>
+      {% endif %}
+    {% endwith %}
+    <div class="card-body">
+      <span class="badge {% if imovel.esta_disponivel %}badge-disponivel{% else %}badge-vendido{% endif %}">
+        {{ imovel.get_status_display }}
+      </span>
+      <h3>{{ imovel.titulo }}</h3>
+      <p>{{ imovel.bairro }}, {{ imovel.cidade }} · {{ imovel.quartos }} quarto(s)</p>
+      <p class="preco">R$ {{ imovel.valor }}</p>
+    </div>
+  </a>
+{% empty %}
+  <p>Nenhum imóvel encontrado com esses filtros.</p>
+{% endfor %}

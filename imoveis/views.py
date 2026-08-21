@@ -40,6 +40,8 @@ def vitrine(request):
         "tipos_imovel": Imovel.TipoImovel.choices,
         "filtros": request.GET,
     }
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "imoveis/_grid.html", context)
     return render(request, "imoveis/vitrine.html", context)
 
 
