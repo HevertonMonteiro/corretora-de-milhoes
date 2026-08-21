@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container">
+  <h2>Contatos recebidos</h2>
+  <table>
+    <thead><tr><th>Nome</th><th>Telefone</th><th>Imóvel</th><th>Data</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for lead in leads %}
+      <tr>
+        <td>{{ lead.nome }}</td>
+        <td>{{ lead.telefone }}</td>
+        <td>{{ lead.imovel_relacionado|default:"—" }}</td>
+        <td>{{ lead.criado_em|date:"d/m/Y H:i" }}</td>
+        <td>
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{ lead.id }}">
+            <button type="submit" class="btn btn-sm btn-outline">
+              {% if lead.atendido %}Atendido ✓{% else %}Marcar como atendido{% endif %}
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5">Nenhum contato recebido ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

@@ -1,0 +1,182 @@
+/* Corretora de Milhões — estilo base do scaffold.
+   Paleta e tipografia são só um ponto de partida: troque pelas cores
+   da marca da corretora quando a identidade visual estiver definida. */
+
+:root {
+  --cor-primaria: #0f4c3a;
+  --cor-primaria-clara: #146c53;
+  --cor-destaque: #c9a24b;
+  --cor-texto: #1c1c1c;
+  --cor-texto-suave: #5a5a5a;
+  --cor-fundo: #ffffff;
+  --cor-fundo-alt: #f6f5f2;
+  --cor-borda: #e5e2da;
+  --raio: 10px;
+  --sombra: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: var(--cor-texto);
+  background: var(--cor-fundo);
+  line-height: 1.5;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--cor-borda);
+}
+.navbar .logo {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--cor-primaria);
+}
+.navbar nav a {
+  margin-left: 24px;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+.navbar nav a:hover { color: var(--cor-primaria); }
+
+/* Botões */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: var(--raio);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+.btn-primary { background: var(--cor-primaria); color: #fff; }
+.btn-primary:hover { background: var(--cor-primaria-clara); }
+.btn-whatsapp { background: #25d366; color: #fff; }
+.btn-outline { background: transparent; border: 1px solid var(--cor-borda); }
+.btn-danger { background: #b3261e; color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: 0.85rem; }
+
+/* Hero */
+.hero {
+  background: var(--cor-fundo-alt);
+  padding: 64px 0;
+  text-align: center;
+}
+.hero h1 { font-size: 2.2rem; margin-bottom: 8px; color: var(--cor-primaria); }
+.hero p { color: var(--cor-texto-suave); max-width: 560px; margin: 0 auto 24px; }
+
+/* Grid de cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin: 32px 0;
+}
+.card {
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  overflow: hidden;
+  box-shadow: var(--sombra);
+  background: #fff;
+}
+.card img, .card .card-img-placeholder {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  background: var(--cor-fundo-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cor-texto-suave);
+}
+.card-body { padding: 16px; }
+.card-body h3 { margin: 0 0 6px; font-size: 1.05rem; }
+.card-body .preco { color: var(--cor-primaria); font-weight: 700; font-size: 1.1rem; }
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--cor-fundo-alt);
+  color: var(--cor-texto-suave);
+  margin-bottom: 8px;
+}
+.badge-disponivel { background: #e5f4ee; color: var(--cor-primaria); }
+.badge-vendido, .badge-alugado { background: #f3e8d8; color: #8a6a1a; }
+
+section { padding: 48px 0; }
+section h2 { color: var(--cor-primaria); margin-bottom: 24px; }
+
+/* Filtros */
+.filtros {
+  background: var(--cor-fundo-alt);
+  padding: 20px;
+  border-radius: var(--raio);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.filtros label { font-size: 0.8rem; color: var(--cor-texto-suave); display: block; margin-bottom: 4px; }
+.filtros select, .filtros input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--cor-borda);
+}
+.filtros .filtros-acoes { align-self: end; }
+
+/* Formulários */
+form p { margin-bottom: 14px; }
+form label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.9rem; }
+form input, form select, form textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--cor-borda);
+  font-family: inherit;
+}
+
+/* WhatsApp flutuante */
+.whatsapp-float {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #25d366;
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 999px;
+  box-shadow: var(--sombra);
+  font-weight: 700;
+  z-index: 100;
+}
+
+/* Footer */
+footer {
+  background: var(--cor-primaria);
+  color: #fff;
+  padding: 40px 0;
+  margin-top: 48px;
+}
+footer a { color: #fff; }
+footer .social a { margin-right: 16px; font-weight: 600; }
+
+.mensagens { list-style: none; padding: 0; margin: 16px 0; }
+.mensagens li { padding: 10px 16px; border-radius: 6px; background: #e5f4ee; margin-bottom: 8px; }
+
+table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+table th, table td { text-align: left; padding: 10px; border-bottom: 1px solid var(--cor-borda); }

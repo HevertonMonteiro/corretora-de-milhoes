@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container" style="max-width: 720px;">
+  <h2>{% if imovel %}Editar imóvel{% else %}Novo imóvel{% endif %}</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <h3>Fotos</h3>
+    {{ fotos_formset.management_form }}
+    {% for foto_form in fotos_formset %}
+      <div class="card" style="padding: 12px; margin-bottom: 12px;">
+        {{ foto_form.as_p }}
+      </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Salvar imóvel</button>
+  </form>
+</section>
+{% endblock %}

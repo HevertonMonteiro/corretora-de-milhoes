@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container">
+  <h2>Imóveis disponíveis</h2>
+
+  <form method="get" class="filtros">
+    <div>
+      <label>Buscar</label>
+      <input type="text" name="q" value="{{ filtros.q|default:'' }}" placeholder="Título do imóvel">
+    </div>
+    <div>
+      <label>Negócio</label>
+      <select name="tipo_negocio">
+        <option value="">Todos</option>
+        {% for valor, rotulo in tipos_negocio %}
+          <option value="{{ valor }}" {% if filtros.tipo_negocio == valor %}selected{% endif %}>{{ rotulo }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Tipo</label>
+      <select name="tipo_imovel">
+        <option value="">Todos</option>
+        {% for valor, rotulo in tipos_imovel %}
+          <option value="{{ valor }}" {% if filtros.tipo_imovel == valor %}selected{% endif %}>{{ rotulo }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Cidade</label>
+      <input type="text" name="cidade" value="{{ filtros.cidade|default:'' }}">
+    </div>
+    <div>
+      <label>Bairro</label>
+      <input type="text" name="bairro" value="{{ filtros.bairro|default:'' }}">
+    </div>
+    <div>
+      <label>Quartos (mín.)</label>
+      <input type="number" name="quartos_min" value="{{ filtros.quartos_min|default:'' }}">
+    </div>
+    <div>
+      <label>Valor mín.</label>
+      <input type="number" name="valor_min" value="{{ filtros.valor_min|default:'' }}">
+    </div>
+    <div>
+      <label>Valor máx.</label>
+      <input type="number" name="valor_max" value="{{ filtros.valor_max|default:'' }}">
+    </div>
+    <div class="filtros-acoes">
+      <button type="submit" class="btn btn-primary">Filtrar</button>
+    </div>
+  </form>
+
+  <div class="grid">
+    {% for imovel in imoveis %}
+      <a class="card" href="{{ imovel.get_absolute_url }}">
+        {% with imovel.fotos.first as capa %}
+          {% if capa %}
+            <img src="{{ capa.imagem.url }}" alt="{{ imovel.titulo }}">
+          {% else %}
+            <div class="card-img-placeholder">Sem foto</div>
+          {% endif %}
+        {% endwith %}
+        <div class="card-body">
+          <span class="badge {% if imovel.esta_disponivel %}badge-disponivel{% else %}badge-vendido{% endif %}">
+            {{ imovel.get_status_display }}
+          </span>
+          <h3>{{ imovel.titulo }}</h3>
+          <p>{{ imovel.bairro }}, {{ imovel.cidade }} · {{ imovel.quartos }} quarto(s)</p>
+          <p class="preco">R$ {{ imovel.valor }}</p>
+        </div>
+      </a>
+    {% empty %}
+      <p>Nenhum imóvel encontrado com esses filtros.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

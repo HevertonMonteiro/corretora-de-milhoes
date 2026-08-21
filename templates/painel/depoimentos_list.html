@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container">
+  <h2>Moderar depoimentos</h2>
+  <table>
+    <thead><tr><th>Cliente</th><th>Nota</th><th>Texto</th><th>Status</th><th>Ações</th></tr></thead>
+    <tbody>
+      {% for d in depoimentos %}
+      <tr>
+        <td>{{ d.nome_cliente }}</td>
+        <td>{{ d.estrelas }}</td>
+        <td>{{ d.texto|truncatewords:15 }}</td>
+        <td>{% if d.aprovado %}Aprovado{% else %}Pendente{% endif %}</td>
+        <td>
+          {% if not d.aprovado %}
+          <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{ d.id }}">
+            <button type="submit" name="acao" value="aprovar" class="btn btn-sm btn-primary">Aprovar</button>
+          </form>
+          {% endif %}
+          <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{ d.id }}">
+            <button type="submit" name="acao" value="excluir" class="btn btn-sm btn-danger">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5">Nenhum depoimento recebido ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container">
+  <h2>Meus imóveis</h2>
+  <p><a class="btn btn-primary" href="{% url 'painel:imovel_create' %}">+ Novo imóvel</a></p>
+
+  <table>
+    <thead>
+      <tr><th>Ref.</th><th>Título</th><th>Status</th><th>Valor</th><th>Ações</th></tr>
+    </thead>
+    <tbody>
+      {% for imovel in imoveis %}
+      <tr>
+        <td>{{ imovel.codigo_referencia }}</td>
+        <td>{{ imovel.titulo }}</td>
+        <td>
+          <form method="post" action="{% url 'painel:imovel_status' imovel.pk %}" style="display:inline-flex; gap:6px;">
+            {% csrf_token %}
+            <select name="status" onchange="this.form.submit()">
+              {% for valor, rotulo in imovel.Status.choices %}
+                <option value="{{ valor }}" {% if imovel.status == valor %}selected{% endif %}>{{ rotulo }}</option>
+              {% endfor %}
+            </select>
+          </form>
+        </td>
+        <td>R$ {{ imovel.valor }}</td>
+        <td>
+          <a class="btn btn-sm btn-outline" href="{% url 'painel:imovel_edit' imovel.pk %}">Editar</a>
+          <a class="btn btn-sm btn-danger" href="{% url 'painel:imovel_delete' imovel.pk %}">Excluir</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5">Nenhum imóvel cadastrado ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

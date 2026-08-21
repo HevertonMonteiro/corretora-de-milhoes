@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ perfil.nome|default:"Corretora de Milhões" }}{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+  <header class="navbar container">
+    <a href="{% url 'home' %}" class="logo">{{ perfil.nome|default:"Corretora de Milhões" }}</a>
+    <nav>
+      <a href="{% url 'imoveis:vitrine' %}">Imóveis</a>
+      <a href="{% url 'home' %}#sobre">Sobre</a>
+      <a href="{% url 'home' %}#realizacoes">Realizações</a>
+      <a href="{% url 'depoimentos:novo' %}">Deixe seu depoimento</a>
+      <a href="{% url 'leads:contato' %}">Contato</a>
+    </nav>
+  </header>
+
+  {% if messages %}
+    <div class="container">
+      <ul class="mensagens">
+        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <div class="container">
+      <p><strong>{{ perfil.nome|default:"Corretora de Milhões" }}</strong>
+        {% if perfil.creci %} · {{ perfil.creci }}{% endif %}</p>
+      {% if perfil.regiao_atuacao %}<p>Atuação: {{ perfil.regiao_atuacao }}</p>{% endif %}
+      <p class="social">
+        {% if perfil.instagram_url %}<a href="{{ perfil.instagram_url }}" target="_blank">Instagram</a>{% endif %}
+        {% if perfil.facebook_url %}<a href="{{ perfil.facebook_url }}" target="_blank">Facebook</a>{% endif %}
+        {% if perfil.whatsapp %}<a href="{{ perfil.whatsapp_link }}" target="_blank">WhatsApp</a>{% endif %}
+      </p>
+    </div>
+  </footer>
+
+  {% if perfil.whatsapp %}
+    <a class="whatsapp-float" href="{{ perfil.whatsapp_link }}" target="_blank">Falar no WhatsApp</a>
+  {% endif %}
+
+</body>
+</html>

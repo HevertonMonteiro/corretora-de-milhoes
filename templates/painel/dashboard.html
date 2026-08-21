@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container">
+  <h2>Painel — visão geral</h2>
+  <div class="grid">
+    <div class="card"><div class="card-body"><h3>{{ total_imoveis }}</h3><p>Imóveis cadastrados</p></div></div>
+    <div class="card"><div class="card-body"><h3>{{ total_disponiveis }}</h3><p>Disponíveis</p></div></div>
+    <div class="card"><div class="card-body"><h3>{{ total_fechados }}</h3><p>Vendidos/Alugados</p></div></div>
+    <div class="card"><div class="card-body"><h3>{{ leads_pendentes }}</h3><p>Contatos a atender</p></div></div>
+    <div class="card"><div class="card-body"><h3>{{ depoimentos_pendentes }}</h3><p>Depoimentos p/ aprovar</p></div></div>
+  </div>
+
+  <p>
+    <a class="btn btn-primary" href="{% url 'painel:imovel_create' %}">+ Novo imóvel</a>
+    <a class="btn btn-outline" href="{% url 'painel:imovel_list' %}">Gerenciar imóveis</a>
+    <a class="btn btn-outline" href="{% url 'painel:realizacao_create' %}">+ Postar negócio fechado</a>
+    <a class="btn btn-outline" href="{% url 'painel:depoimentos_moderar' %}">Moderar depoimentos</a>
+    <a class="btn btn-outline" href="{% url 'painel:leads_list' %}">Ver contatos</a>
+  </p>
+</section>
+{% endblock %}

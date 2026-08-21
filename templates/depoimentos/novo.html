@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container" style="max-width: 560px;">
+  <h2>Deixe seu depoimento</h2>
+  <p>Sua avaliação passa por uma revisão rápida antes de ser publicada no site.</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Enviar depoimento</button>
+  </form>
+</section>
+{% endblock %}

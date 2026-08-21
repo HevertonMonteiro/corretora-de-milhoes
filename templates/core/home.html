@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <h1>{{ perfil.nome|default:"Encontre o imóvel certo com quem conhece a região" }}</h1>
+    <p>{{ perfil.bio|default:"Atendimento próximo, do primeiro contato até a entrega das chaves." }}</p>
+    <a href="{% url 'imoveis:vitrine' %}" class="btn btn-primary">Ver imóveis disponíveis</a>
+  </div>
+</section>
+
+<section class="container">
+  <h2>Imóveis em destaque</h2>
+  <div class="grid">
+    {% for imovel in imoveis_destaque %}
+      <a class="card" href="{{ imovel.get_absolute_url }}">
+        {% with imovel.fotos.first as capa %}
+          {% if capa %}
+            <img src="{{ capa.imagem.url }}" alt="{{ imovel.titulo }}">
+          {% else %}
+            <div class="card-img-placeholder">Sem foto</div>
+          {% endif %}
+        {% endwith %}
+        <div class="card-body">
+          <span class="badge badge-disponivel">{{ imovel.get_tipo_negocio_display }}</span>
+          <h3>{{ imovel.titulo }}</h3>
+          <p>{{ imovel.bairro }}, {{ imovel.cidade }}</p>
+          <p class="preco">R$ {{ imovel.valor }}</p>
+        </div>
+      </a>
+    {% empty %}
+      <p>Nenhum imóvel em destaque no momento. Cadastre imóveis no <a href="{% url 'painel:dashboard' %}">painel</a> e marque como "destaque".</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="realizacoes" class="container">
+  <h2>Negócios fechados recentemente</h2>
+  <div class="grid">
+    {% for r in realizacoes %}
+      <div class="card">
+        <img src="{{ r.foto.url }}" alt="{{ r.titulo }}">
+        <div class="card-body">
+          <h3>{{ r.titulo }}</h3>
+          <p>{{ r.texto }}</p>
+        </div>
+      </div>
+    {% empty %}
+      <p>Em breve, os próximos negócios fechados aparecem aqui.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="container">
+  <h2>O que os clientes dizem</h2>
+  <div class="grid">
+    {% for d in depoimentos %}
+      <div class="card">
+        <div class="card-body">
+          <p>{{ d.estrelas }}</p>
+          <p>"{{ d.texto }}"</p>
+          <p><strong>{{ d.nome_cliente }}</strong></p>
+        </div>
+      </div>
+    {% empty %}
+      <p>Ainda sem depoimentos publicados. <a href="{% url 'depoimentos:novo' %}">Seja o primeiro a avaliar</a>.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
