@@ -4,7 +4,7 @@
 <section class="container" style="max-width: 560px;">
   <a href="{% url 'home' %}" class="voltar-link">← Voltar para o início</a>
   <h2>Fale com a corretora</h2>
-  <p>Preencha os dados abaixo — você será redirecionado direto para o WhatsApp com a mensagem pronta.</p>
+  <p>Preencha os dados abaixo e você será redirecionado direto para o WhatsApp com a mensagem pronta.</p>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}

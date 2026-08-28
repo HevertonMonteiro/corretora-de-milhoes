@@ -186,6 +186,11 @@ else:
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Login (usuário ou e-mail) sem diferenciar maiúsculas de minúsculas —
+# só existe a conta única da corretora, então não faz sentido tratar
+# "Renata" e "renata" como contas diferentes.
+AUTHENTICATION_BACKENDS = ["painel.backends.CaseInsensitiveModelBackend"]
+
 LOGIN_URL = "painel:login"
 LOGIN_REDIRECT_URL = "painel:dashboard"
 LOGOUT_REDIRECT_URL = "home"
