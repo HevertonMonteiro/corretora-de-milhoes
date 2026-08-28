@@ -29,6 +29,15 @@ SECRET_KEY = env(
 DEBUG = env.bool("DEBUG", default=True)
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
+if not DEBUG:
+    # O Render fica atrás de um proxy que termina o HTTPS antes da aplicação —
+    # sem isso o Django acha que a conexão é HTTP e quebra o redirect/CSRF.
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 
 # Application definition
@@ -51,6 +60,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -131,10 +141,45 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Arquivos de mídia (fotos de imóveis, foto da corretora, posts de realização)
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# Em dev, mídia fica em MEDIA_ROOT (disco local) sem precisar configurar nada.
+# Em produção, o disco do Render é temporário — definir as variáveis
+# SUPABASE_STORAGE_* (veja .env.example) muda o armazenamento das fotos para
+# o Supabase Storage (compatível com S3), que é persistente.
+SUPABASE_STORAGE_BUCKET = env("SUPABASE_STORAGE_BUCKET", default="")
+
+if SUPABASE_STORAGE_BUCKET:
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+            "OPTIONS": {
+                "bucket_name": SUPABASE_STORAGE_BUCKET,
+                "endpoint_url": env("SUPABASE_STORAGE_ENDPOINT_URL"),
+                "access_key": env("SUPABASE_STORAGE_ACCESS_KEY"),
+                "secret_key": env("SUPABASE_STORAGE_SECRET_KEY"),
+                "region_name": env("SUPABASE_STORAGE_REGION", default="us-east-1"),
+                "default_acl": "public-read",
+                "querystring_auth": False,
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -144,3 +189,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_URL = "painel:login"
 LOGIN_REDIRECT_URL = "painel:dashboard"
 LOGOUT_REDIRECT_URL = "home"
+
+# A corretora precisa fazer login de novo sempre que fechar o navegador —
+# a sessão não sobrevive ao fechamento (não depende do "lembrar de mim").
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

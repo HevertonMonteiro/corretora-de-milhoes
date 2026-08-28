@@ -1,19 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="container" style="max-width: 720px;">
+<section class="container" style="max-width: 780px;">
+  <a href="{% url 'painel:imovel_list' %}" class="voltar-link">← Voltar para meus imóveis</a>
   <h2>{% if imovel %}Editar imóvel{% else %}Novo imóvel{% endif %}</h2>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
 
-    <h3>Fotos</h3>
+    <h3>Fotos <small style="color: var(--cor-texto-suave); font-weight: 500;">(até 9)</small></h3>
     {{ fotos_formset.management_form }}
-    {% for foto_form in fotos_formset %}
-      <div class="card" style="padding: 12px; margin-bottom: 12px;">
-        {{ foto_form.as_p }}
-      </div>
-    {% endfor %}
+    {% if fotos_formset.non_form_errors %}
+      <p style="color: #b3261e;">{{ fotos_formset.non_form_errors|join:" " }}</p>
+    {% endif %}
+    <div class="fotos-formset">
+      {% for foto_form in fotos_formset %}
+        <div class="card fotos-formset-item">
+          {{ foto_form.as_p }}
+        </div>
+      {% endfor %}
+    </div>
 
     <button type="submit" class="btn btn-primary">Salvar imóvel</button>
   </form>

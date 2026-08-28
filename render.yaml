@@ -1,0 +1,32 @@
+# Blueprint do Render — no dashboard, use "New > Blueprint" apontando pra
+# este repositório e o Render cria o serviço lendo este arquivo.
+# As variáveis marcadas com "sync: false" precisam ser preenchidas à mão
+# no dashboard do Render (veja .env.example para o que colocar em cada uma).
+services:
+  - type: web
+    name: corretora-de-milhoes
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_STORAGE_BUCKET
+        sync: false
+      - key: SUPABASE_STORAGE_ENDPOINT_URL
+        sync: false
+      - key: SUPABASE_STORAGE_ACCESS_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_SECRET_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_REGION
+        value: us-east-1

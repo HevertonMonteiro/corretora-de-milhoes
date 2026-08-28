@@ -6,6 +6,7 @@
 
 {% block content %}
 <section class="container">
+  <a href="{% url 'imoveis:vitrine' %}" class="voltar-link">← Voltar para a vitrine</a>
   <span class="badge {% if imovel.esta_disponivel %}badge-disponivel{% else %}badge-vendido{% endif %}">
     {{ imovel.get_status_display }}
   </span>
@@ -43,6 +44,19 @@
     {% if imovel.area_construida %}{{ imovel.area_construida }} m²{% endif %}
   </p>
   <p>{{ imovel.descricao|linebreaks }}</p>
+
+  {% if imovel.video_url %}
+    <h3>Vídeo do imóvel</h3>
+    <div class="video-wrapper">
+      <iframe
+        src="{{ imovel.video_url }}"
+        title="Vídeo de {{ imovel.titulo }}"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+  {% endif %}
 
   {% if imovel.latitude and imovel.longitude %}
     <h3>Localização</h3>

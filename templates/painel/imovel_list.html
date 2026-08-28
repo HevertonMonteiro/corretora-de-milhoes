@@ -5,6 +5,7 @@
   <h2>Meus imóveis</h2>
   <p><a class="btn btn-primary" href="{% url 'painel:imovel_create' %}">+ Novo imóvel</a></p>
 
+  <div class="table-responsive">
   <table>
     <thead>
       <tr><th>Ref.</th><th>Título</th><th>Status</th><th>Valor</th><th>Ações</th></tr>
@@ -35,5 +36,6 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
 </section>
 {% endblock %}

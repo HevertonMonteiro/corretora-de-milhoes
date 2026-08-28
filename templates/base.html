@@ -19,7 +19,7 @@
 
   {% if request.resolver_match.app_name == 'painel' %}
   <header class="navbar navbar-painel container">
-    <a href="{% url 'painel:dashboard' %}" class="logo">{{ perfil.nome|default:"Corretora de Milhões" }} <span class="navbar-tag">painel</span></a>
+    <a href="{% if user.is_authenticated %}{% url 'painel:dashboard' %}{% else %}{% url 'home' %}{% endif %}" class="logo">{{ perfil.nome|default:"Corretora de Milhões" }} <span class="navbar-tag">painel</span></a>
     {% if user.is_authenticated %}
     <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
     <nav>
@@ -43,6 +43,11 @@
       <a href="{% url 'home' %}#realizacoes">Realizações</a>
       <a href="{% url 'depoimentos:novo' %}">Deixe seu depoimento</a>
       <a href="{% url 'leads:contato' %}">Contato</a>
+      {% if user.is_authenticated %}
+      <a href="{% url 'painel:dashboard' %}" class="navbar-corretora">Painel</a>
+      {% else %}
+      <a href="{% url 'painel:login' %}" class="navbar-corretora">Entrar como corretora</a>
+      {% endif %}
     </nav>
   </header>
   {% endif %}
