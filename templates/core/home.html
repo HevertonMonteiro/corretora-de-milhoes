@@ -4,13 +4,16 @@
 {% block content %}
 <section class="hero">
   <div class="container">
-    <span class="kicker">{% if perfil.creci %}{{ perfil.creci }}{% else %}Corretora independente{% endif %}</span>
+    <span class="kicker kicker-hero">{% if perfil.creci %}{{ perfil.creci }}{% else %}Corretora independente{% endif %}</span>
     <h1>Encontre o imóvel <em>certo</em> com quem conhece a região</h1>
-    <p>{{ perfil.bio|default:"Atendimento próximo, do primeiro contato até a entrega das chaves — com transparência em cada etapa da negociação." }}</p>
+    <p>{{ perfil.bio|default:"Atendimento próximo e transparente em cada etapa da negociação, do primeiro contato até a entrega das chaves da sua nova casa." }}</p>
     <div class="hero-acoes">
       <a href="{% url 'imoveis:vitrine' %}" class="btn btn-primary">Ver imóveis disponíveis</a>
       {% if perfil.whatsapp %}
-        <a href="{{ perfil.whatsapp_link }}" target="_blank" rel="noopener" class="btn btn-whatsapp">Falar agora no WhatsApp</a>
+        <a href="{{ perfil.whatsapp_link }}" target="_blank" rel="noopener" class="btn btn-whatsapp">Clique aqui e fale comigo no WhatsApp</a>
+      {% endif %}
+      {% if perfil.instagram_url %}
+        <a href="{{ perfil.instagram_url }}" target="_blank" rel="noopener" class="btn btn-instagram">Ver no Instagram</a>
       {% endif %}
     </div>
 
