@@ -7,7 +7,7 @@ services:
     name: corretora-de-milhoes
     runtime: python
     plan: free
-    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate && python manage.py criar_superuser_inicial"
     startCommand: "gunicorn config.wsgi:application"
     envVars:
       - key: SECRET_KEY
@@ -30,3 +30,9 @@ services:
         sync: false
       - key: SUPABASE_STORAGE_REGION
         value: us-east-1
+      - key: DJANGO_SUPERUSER_USERNAME
+        sync: false
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
