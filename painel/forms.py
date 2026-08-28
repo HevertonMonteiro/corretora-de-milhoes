@@ -49,7 +49,9 @@ class PerfilForm(forms.ModelForm):
     class Meta:
         model = PerfilCorretora
         # facebook_url fica de fora — a corretora não usa Facebook no site.
-        exclude = ["facebook_url", "atualizado_em"]
+        # latitude/longitude também ficam de fora — não tem nenhum mapa do
+        # escritório no site (só o mapa de cada imóvel, que é outro campo).
+        exclude = ["facebook_url", "latitude", "longitude", "atualizado_em"]
         widgets = {
             "bio": forms.Textarea(attrs={"rows": 5}),
         }

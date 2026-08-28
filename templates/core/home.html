@@ -4,7 +4,12 @@
 {% block content %}
 <section class="hero">
   <div class="container">
-    <span class="kicker kicker-hero">{% if perfil.creci %}{{ perfil.creci }}{% else %}Corretora independente{% endif %}</span>
+    <span class="kicker kicker-hero">
+      {% if perfil.nome and perfil.creci %}{{ perfil.nome }} · {{ perfil.creci }}
+      {% elif perfil.nome %}{{ perfil.nome }}
+      {% elif perfil.creci %}{{ perfil.creci }}
+      {% else %}Corretora independente{% endif %}
+    </span>
     <h1>Encontre o imóvel <em>certo</em> com quem conhece a região</h1>
     <p>{{ perfil.bio|default:"Atendimento próximo e transparente em cada etapa da negociação, do primeiro contato até a entrega das chaves da sua nova casa." }}</p>
     <div class="hero-acoes">
