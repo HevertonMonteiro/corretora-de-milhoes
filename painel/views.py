@@ -7,8 +7,9 @@ from django.urls import reverse, reverse_lazy
 from imoveis.models import Imovel, Realizacao
 from depoimentos.models import Depoimento
 from leads.models import Lead
+from perfil.models import PerfilCorretora
 
-from .forms import ImovelForm, ImovelFotoFormSet, RealizacaoForm
+from .forms import ImovelForm, ImovelFotoFormSet, RealizacaoForm, PerfilForm
 
 
 class PainelLoginView(LoginView):
@@ -16,7 +17,7 @@ class PainelLoginView(LoginView):
 
 
 class PainelLogoutView(LogoutView):
-    next_page = "home"
+    next_page = "painel:login"
 
 
 @login_required
@@ -134,3 +135,21 @@ def leads_list(request):
 
     leads = Lead.objects.all()
     return render(request, "painel/leads_list.html", {"leads": leads})
+
+
+@login_required
+def perfil_editar(request):
+    """Perfil é um singleton: sempre edita o único registro existente, ou
+    cria o primeiro se ainda não houver nenhum (ex: banco novo em produção)."""
+    perfil = PerfilCorretora.objects.first()
+
+    if request.method == "POST":
+        form = PerfilForm(request.POST, request.FILES, instance=perfil)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Perfil atualizado com sucesso.")
+            return redirect(reverse("painel:perfil_editar"))
+    else:
+        form = PerfilForm(instance=perfil)
+
+    return render(request, "painel/perfil_form.html", {"form": form, "perfil_existe": perfil is not None})

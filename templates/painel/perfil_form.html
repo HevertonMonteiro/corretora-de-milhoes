@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container" style="max-width: 720px;">
+  <a href="{% url 'painel:dashboard' %}" class="voltar-link">← Voltar para o painel</a>
+  <h2>Meu perfil</h2>
+  <p style="color: var(--cor-texto-suave);">
+    Esses dados aparecem no site público: navbar, rodapé, seção "Sobre" e
+    botões de contato (WhatsApp e Instagram).
+  </p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Salvar perfil</button>
+  </form>
+</section>
+{% endblock %}

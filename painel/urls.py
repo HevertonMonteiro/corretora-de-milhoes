@@ -16,4 +16,5 @@ urlpatterns = [
     path("realizacoes/nova/", views.realizacao_create, name="realizacao_create"),
     path("depoimentos/", views.depoimentos_moderar, name="depoimentos_moderar"),
     path("leads/", views.leads_list, name="leads_list"),
+    path("perfil/", views.perfil_editar, name="perfil_editar"),
 ]

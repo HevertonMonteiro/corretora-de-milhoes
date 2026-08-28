@@ -2,6 +2,7 @@ from django import forms
 from django.forms import inlineformset_factory
 
 from imoveis.models import Imovel, ImovelFoto, Realizacao
+from perfil.models import PerfilCorretora
 
 
 MAX_FOTOS_POR_IMOVEL = 9
@@ -41,4 +42,17 @@ class RealizacaoForm(forms.ModelForm):
         fields = ["imovel", "titulo", "texto", "foto", "visivel"]
         widgets = {
             "texto": forms.Textarea(attrs={"rows": 4}),
+        }
+
+
+class PerfilForm(forms.ModelForm):
+    class Meta:
+        model = PerfilCorretora
+        # facebook_url fica de fora — a corretora não usa Facebook no site.
+        exclude = ["facebook_url", "atualizado_em"]
+        widgets = {
+            "bio": forms.Textarea(attrs={"rows": 5}),
+        }
+        help_texts = {
+            "whatsapp": "Formato internacional, sem espaços ou símbolos. Ex: 5581999999999",
         }
