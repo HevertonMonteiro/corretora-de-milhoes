@@ -144,7 +144,10 @@ class ImovelFoto(models.Model):
         Imovel, related_name="fotos", on_delete=models.CASCADE
     )
     imagem = models.ImageField(upload_to="imoveis/%Y/%m/")
-    legenda = models.CharField(max_length=120, blank=True)
+    titulo = models.CharField(
+        "título", max_length=120, blank=True,
+        help_text="Nome do cômodo mostrado embaixo da foto, ex: Sala, Quarto 1, Varanda.",
+    )
     ordem = models.PositiveSmallIntegerField(default=0)
 
     class Meta:

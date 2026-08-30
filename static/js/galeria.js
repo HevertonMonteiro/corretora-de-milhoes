@@ -5,9 +5,18 @@
   if (!principal) return;
 
   var imagemAtual = document.getElementById("galeria-imagem-atual");
+  var legenda = document.getElementById("galeria-legenda");
   var miniaturas = document.querySelectorAll("#galeria-miniaturas img");
-  var fotos = Array.from(miniaturas).map(function (img) { return { src: img.src, alt: img.alt }; });
-  if (!fotos.length) fotos = [{ src: imagemAtual.src, alt: imagemAtual.alt }];
+  var fotos = Array.from(miniaturas).map(function (img) {
+    return { src: img.src, alt: img.alt, titulo: img.getAttribute("data-titulo") || "" };
+  });
+  if (!fotos.length) {
+    fotos = [{
+      src: imagemAtual.src,
+      alt: imagemAtual.alt,
+      titulo: imagemAtual.getAttribute("data-titulo") || "",
+    }];
+  }
 
   var lightbox = document.getElementById("lightbox");
   var lightboxImagem = document.getElementById("lightbox-imagem");
@@ -17,6 +26,7 @@
     indiceAtual = indice;
     imagemAtual.src = fotos[indice].src;
     imagemAtual.alt = fotos[indice].alt;
+    if (legenda) legenda.textContent = fotos[indice].titulo;
     miniaturas.forEach(function (img, i) {
       img.classList.toggle("ativa", i === indice);
     });

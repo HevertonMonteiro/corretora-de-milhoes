@@ -11,7 +11,11 @@ MAX_FOTOS_POR_IMOVEL = 9
 class ImovelForm(forms.ModelForm):
     class Meta:
         model = Imovel
-        exclude = ["slug", "codigo_referencia", "criado_em", "atualizado_em"]
+        # latitude/longitude ficam de fora — não tem mapa do imóvel no site.
+        exclude = [
+            "slug", "codigo_referencia", "criado_em", "atualizado_em",
+            "latitude", "longitude",
+        ]
         widgets = {
             "descricao": forms.Textarea(attrs={"rows": 5}),
         }
@@ -42,7 +46,7 @@ class ImovelForm(forms.ModelForm):
 ImovelFotoFormSet = inlineformset_factory(
     Imovel,
     ImovelFoto,
-    fields=["imagem", "legenda", "ordem"],
+    fields=["imagem", "titulo", "ordem"],
     extra=MAX_FOTOS_POR_IMOVEL,
     max_num=MAX_FOTOS_POR_IMOVEL,
     validate_max=True,

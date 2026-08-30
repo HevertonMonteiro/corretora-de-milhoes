@@ -16,12 +16,13 @@
   {% with fotos=imovel.fotos.all %}
     {% if fotos %}
       <div class="galeria-principal" id="galeria-principal" data-index="0">
-        <img id="galeria-imagem-atual" src="{{ fotos.0.imagem.url }}" alt="{{ fotos.0.legenda|default:imovel.titulo }}">
+        <img id="galeria-imagem-atual" src="{{ fotos.0.imagem.url }}" alt="{{ fotos.0.titulo|default:imovel.titulo }}" data-titulo="{{ fotos.0.titulo }}">
       </div>
+      <p class="galeria-legenda" id="galeria-legenda">{{ fotos.0.titulo }}</p>
       {% if fotos|length > 1 %}
         <div class="galeria-miniaturas" id="galeria-miniaturas">
           {% for foto in fotos %}
-            <img src="{{ foto.imagem.url }}" alt="{{ foto.legenda|default:imovel.titulo }}" data-index="{{ forloop.counter0 }}" class="{% if forloop.first %}ativa{% endif %}">
+            <img src="{{ foto.imagem.url }}" alt="{{ foto.titulo|default:imovel.titulo }}" data-index="{{ forloop.counter0 }}" data-titulo="{{ foto.titulo }}" class="{% if forloop.first %}ativa{% endif %}">
           {% endfor %}
         </div>
       {% endif %}
@@ -57,15 +58,6 @@
         allowfullscreen>
       </iframe>
     </div>
-  {% endif %}
-
-  {% if imovel.latitude and imovel.longitude %}
-    <h3>Localização</h3>
-    <iframe
-      width="100%" height="320" style="border:0; border-radius: var(--raio-lg);"
-      loading="lazy"
-      src="https://www.google.com/maps?q={{ imovel.latitude }},{{ imovel.longitude }}&output=embed">
-    </iframe>
   {% endif %}
 
   <p style="margin-top: 24px;">
