@@ -1,19 +1,11 @@
-import re
-
 from django import forms
 from django.forms import inlineformset_factory
 
-from imoveis.models import Imovel, ImovelFoto, Realizacao
+from imoveis.models import YOUTUBE_ID_RE, Imovel, ImovelFoto, Realizacao
 from perfil.models import PerfilCorretora
 
 
 MAX_FOTOS_POR_IMOVEL = 9
-
-# Casa qualquer formato de link do YouTube (assistir, compartilhado
-# youtu.be, shorts ou já incorporado) e extrai o ID do vídeo.
-YOUTUBE_ID_RE = re.compile(
-    r"(?:youtube\.com/(?:watch\?v=|embed/|shorts/)|youtu\.be/)([\w-]{11})"
-)
 
 
 class ImovelForm(forms.ModelForm):

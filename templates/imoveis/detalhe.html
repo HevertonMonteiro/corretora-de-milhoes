@@ -49,10 +49,11 @@
     <h3>Vídeo do imóvel</h3>
     <div class="video-wrapper">
       <iframe
-        src="{{ imovel.video_url }}"
+        src="{{ imovel.video_embed_url }}"
         title="Vídeo de {{ imovel.titulo }}"
         loading="lazy"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen>
       </iframe>
     </div>

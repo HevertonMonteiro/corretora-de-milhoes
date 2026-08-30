@@ -1,5 +1,13 @@
+import re
+
 from django.db import models
 from django.urls import reverse
+
+# Casa qualquer formato de link do YouTube (assistir, compartilhado
+# youtu.be, shorts ou já incorporado) e extrai o ID do vídeo.
+YOUTUBE_ID_RE = re.compile(
+    r"(?:youtube\.com/(?:watch\?v=|embed/|shorts/)|youtu\.be/)([\w-]{11})"
+)
 
 
 class Imovel(models.Model):
@@ -112,6 +120,21 @@ class Imovel(models.Model):
     @property
     def esta_disponivel(self):
         return self.status == self.Status.DISPONIVEL
+
+    @property
+    def video_embed_url(self):
+        """Sempre serve o vídeo pelo domínio youtube-nocookie.com — evita o
+        "Erro 153" que o player do YouTube mostra em navegadores com
+        bloqueio de rastreamento entre sites ligado (ex: Safari com
+        "Impedir Rastreamento entre Sites"), que quebra o embed no domínio
+        normal youtube.com. Reprocessa o link salvo a cada acesso, então
+        corrige sozinho até imóveis salvos antes desse ajuste."""
+        if not self.video_url:
+            return ""
+        match = YOUTUBE_ID_RE.search(self.video_url)
+        if match:
+            return f"https://www.youtube-nocookie.com/embed/{match.group(1)}"
+        return self.video_url
 
 
 class ImovelFoto(models.Model):
