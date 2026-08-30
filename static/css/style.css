@@ -83,11 +83,20 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 1px solid var(--cor-borda);
 }
 .navbar .logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-family: var(--fonte-titulo);
   font-weight: 700;
   font-size: 1.5rem;
   color: var(--cor-grafite);
   letter-spacing: 0.01em;
+}
+.logo-selo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 .navbar nav {
   display: flex;
@@ -394,6 +403,13 @@ form input:focus, form select:focus, form textarea:focus { outline: none; border
 }
 .galeria-principal img { width: 100%; height: 420px; object-fit: cover; display: block; transition: transform 500ms ease; }
 .galeria-principal:hover img { transform: scale(1.03); }
+.galeria-legenda {
+  margin: 10px 2px 0;
+  color: var(--cor-texto-suave);
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-height: 1.2em;
+}
 .galeria-miniaturas { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
 .galeria-miniaturas img {
   width: 84px; height: 64px; object-fit: cover; border-radius: 8px; cursor: pointer;
