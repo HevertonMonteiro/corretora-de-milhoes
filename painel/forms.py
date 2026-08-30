@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.forms import inlineformset_factory
 
@@ -6,6 +8,12 @@ from perfil.models import PerfilCorretora
 
 
 MAX_FOTOS_POR_IMOVEL = 9
+
+# Casa qualquer formato de link do YouTube (assistir, compartilhado
+# youtu.be, shorts ou já incorporado) e extrai o ID do vídeo.
+YOUTUBE_ID_RE = re.compile(
+    r"(?:youtube\.com/(?:watch\?v=|embed/|shorts/)|youtu\.be/)([\w-]{11})"
+)
 
 
 class ImovelForm(forms.ModelForm):
@@ -17,10 +25,24 @@ class ImovelForm(forms.ModelForm):
         }
         help_texts = {
             "video_url": (
-                "Link de incorporação do YouTube (ex: https://www.youtube.com/embed/ID) "
-                "— até 1 vídeo por imóvel."
+                "Cole o link do vídeo do YouTube — funciona com o link normal, "
+                "o de compartilhar (youtu.be) ou o de incorporação. "
+                "Até 1 vídeo por imóvel."
             ),
         }
+
+    def clean_video_url(self):
+        """A corretora costuma colar o link que o YouTube dá ao clicar em
+        "Compartilhar" (ex: youtu.be/ID), que o navegador recusa a exibir
+        dentro do iframe da página do imóvel. Convertemos automaticamente
+        para o formato de incorporação (/embed/ID), que é o único que
+        funciona dentro de um iframe."""
+        url = self.cleaned_data.get("video_url", "")
+        if url:
+            match = YOUTUBE_ID_RE.search(url)
+            if match:
+                return f"https://www.youtube.com/embed/{match.group(1)}"
+        return url
 
 
 # Formset para a corretora subir várias fotos do imóvel de uma vez só.

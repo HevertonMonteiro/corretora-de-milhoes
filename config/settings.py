@@ -169,17 +169,27 @@ MEDIA_ROOT = BASE_DIR / "media"
 SUPABASE_STORAGE_BUCKET = env("SUPABASE_STORAGE_BUCKET", default="")
 
 if SUPABASE_STORAGE_BUCKET:
+    _supabase_endpoint = env("SUPABASE_STORAGE_ENDPOINT_URL")
+    # O endpoint S3 (https://<ref>.storage.supabase.co/storage/v1/s3) exige
+    # requisição assinada mesmo pra bucket público — o navegador recebe
+    # "AccessDenied: Missing signature" ao tentar carregar a foto direto.
+    # As fotos precisam ser servidas pela URL pública de objeto da Supabase
+    # (https://<ref>.supabase.co/storage/v1/object/public/<bucket>/<arquivo>),
+    # que não exige assinatura. custom_domain faz o django-storages montar
+    # a .url() das fotos nesse formato em vez do endpoint S3.
+    _supabase_ref = _supabase_endpoint.split("//")[1].split(".")[0]
     STORAGES = {
         "default": {
             "BACKEND": "storages.backends.s3.S3Storage",
             "OPTIONS": {
                 "bucket_name": SUPABASE_STORAGE_BUCKET,
-                "endpoint_url": env("SUPABASE_STORAGE_ENDPOINT_URL"),
+                "endpoint_url": _supabase_endpoint,
                 "access_key": env("SUPABASE_STORAGE_ACCESS_KEY"),
                 "secret_key": env("SUPABASE_STORAGE_SECRET_KEY"),
                 "region_name": env("SUPABASE_STORAGE_REGION", default="us-east-1"),
                 "default_acl": "public-read",
                 "querystring_auth": False,
+                "custom_domain": f"{_supabase_ref}.supabase.co/storage/v1/object/public/{SUPABASE_STORAGE_BUCKET}",
             },
         },
         "staticfiles": {
