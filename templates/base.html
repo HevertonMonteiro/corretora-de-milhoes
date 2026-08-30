@@ -70,8 +70,8 @@
 
   <footer>
     <div class="container">
-      <p><strong>{{ perfil.nome|default:"Corretora de Milhões" }}</strong>
-        {% if perfil.creci %} · {{ perfil.creci }}{% endif %}</p>
+      <p><strong>{{ perfil.nome|default:"Corretora de Milhões" }}</strong></p>
+      {% if perfil.creci %}<p>CRECI - {{ perfil.creci }}</p>{% endif %}
       {% if perfil.regiao_atuacao %}<p>Atuação: {{ perfil.regiao_atuacao }}</p>{% endif %}
       <p class="social">
         {% if perfil.instagram_url %}

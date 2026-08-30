@@ -9,7 +9,10 @@ class PerfilCorretora(models.Model):
 
     nome = models.CharField(max_length=120)
     foto = models.ImageField(upload_to="perfil/", blank=True, null=True)
-    creci = models.CharField(max_length=20, help_text="Ex: CRECI-PE 12345")
+    creci = models.CharField(
+        max_length=20,
+        help_text='Apenas o número do registro, ex: PE 12345 (o site já mostra o rótulo "CRECI -" na frente).',
+    )
     bio = models.TextField(blank=True)
     regiao_atuacao = models.CharField(
         max_length=200, help_text="Ex: Recife, Boa Viagem, Casa Forte e região"

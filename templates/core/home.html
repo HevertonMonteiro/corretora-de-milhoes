@@ -5,9 +5,9 @@
 <section class="hero">
   <div class="container">
     <span class="kicker kicker-hero">
-      {% if perfil.nome and perfil.creci %}{{ perfil.nome }} · {{ perfil.creci }}
+      {% if perfil.nome and perfil.creci %}{{ perfil.nome }} · CRECI - {{ perfil.creci }}
       {% elif perfil.nome %}{{ perfil.nome }}
-      {% elif perfil.creci %}{{ perfil.creci }}
+      {% elif perfil.creci %}CRECI - {{ perfil.creci }}
       {% else %}Corretora independente{% endif %}
     </span>
     <h1>Encontre o imóvel <em>certo</em> com quem conhece a região</h1>
