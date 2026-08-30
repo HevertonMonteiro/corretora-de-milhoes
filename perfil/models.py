@@ -1,3 +1,5 @@
+import re
+
 from django.db import models
 from django.core.exceptions import ValidationError
 
@@ -20,7 +22,9 @@ class PerfilCorretora(models.Model):
 
     # Contato
     whatsapp = models.CharField(
-        max_length=20, help_text="Formato internacional, ex: 5581999999999"
+        max_length=20,
+        help_text="Formato internacional, ex: 5581999999999 (funciona mesmo se "
+        "digitar com espaço, + ou traço — só os números é que contam).",
     )
     email = models.EmailField(blank=True)
     instagram_url = models.URLField(blank=True)
@@ -52,5 +56,13 @@ class PerfilCorretora(models.Model):
             )
 
     @property
+    def whatsapp_numero_limpo(self):
+        """Só os dígitos do WhatsApp. O link do wa.me quebra se sobrar
+        espaço, "+", parêntese ou traço no meio (ex: corretora digitando
+        "+55 81 99999-9999" em vez de "5581999999999") — normaliza sozinho
+        a cada acesso, então não depende de reeditar o cadastro."""
+        return re.sub(r"\D", "", self.whatsapp or "")
+
+    @property
     def whatsapp_link(self):
-        return f"https://wa.me/{self.whatsapp}"
+        return f"https://wa.me/{self.whatsapp_numero_limpo}"

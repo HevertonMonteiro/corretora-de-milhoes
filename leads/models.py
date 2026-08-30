@@ -37,7 +37,7 @@ class Lead(models.Model):
         from perfil.models import PerfilCorretora
 
         perfil = PerfilCorretora.objects.first()
-        numero = perfil.whatsapp if perfil else ""
+        numero = perfil.whatsapp_numero_limpo if perfil else ""
 
         partes = [f"Olá, meu nome é {self.nome}."]
         if self.imovel_relacionado:
