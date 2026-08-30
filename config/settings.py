@@ -31,6 +31,16 @@ DEBUG = env.bool("DEBUG", default=True)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
+# O Render injeta essa variável sozinho (não precisa configurar no
+# dashboard) com a URL pública do serviço, ex: https://corretora-de-milhoes.
+# onrender.com. Adicionamos automaticamente aos CSRF_TRUSTED_ORIGINS pra não
+# depender de lembrar de preencher CSRF_TRUSTED_ORIGINS na mão — sem isso o
+# Django rejeita os POSTs do painel (login, cadastro de imóvel etc.) com
+# "Verificação CSRF falhou".
+RENDER_EXTERNAL_URL = env("RENDER_EXTERNAL_URL", default="")
+if RENDER_EXTERNAL_URL and RENDER_EXTERNAL_URL not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append(RENDER_EXTERNAL_URL)
+
 if not DEBUG:
     # O Render fica atrás de um proxy que termina o HTTPS antes da aplicação —
     # sem isso o Django acha que a conexão é HTTP e quebra o redirect/CSRF.
