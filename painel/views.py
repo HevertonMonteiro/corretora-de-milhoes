@@ -3,7 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 
+from core.ratelimit import limitar_por_ip
 from imoveis.models import Imovel, Realizacao
 from depoimentos.models import Depoimento
 from leads.models import Lead
@@ -12,6 +14,10 @@ from perfil.models import PerfilCorretora
 from .forms import ImovelForm, ImovelFotoFormSet, RealizacaoForm, PerfilForm
 
 
+@method_decorator(
+    limitar_por_ip("painel_login", max_tentativas=8, janela_segundos=300),
+    name="dispatch",
+)
 class PainelLoginView(LoginView):
     template_name = "painel/login.html"
 

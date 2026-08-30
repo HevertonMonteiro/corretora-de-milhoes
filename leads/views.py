@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
 
+from core.ratelimit import limitar_por_ip
+
 from .forms import LeadForm
 
 
+@limitar_por_ip("leads_contato", max_tentativas=5, janela_segundos=600)
 def contato(request):
     """Formulário de contato. Salva o lead no banco (histórico/CRM da
     corretora) e redireciona para o WhatsApp com a mensagem pré-preenchida

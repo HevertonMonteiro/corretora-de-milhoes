@@ -38,6 +38,11 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    # HSTS: começa em 1 semana (não 1 ano) porque, uma vez que o navegador
+    # guarda essa política, ele passa a recusar HTTP para o domínio até o
+    # prazo expirar — 1 semana dá margem pra reverter caso precise trocar
+    # de domínio/certificado sem trancar visitantes fora do site.
+    SECURE_HSTS_SECONDS = 604800
 
 
 # Application definition
