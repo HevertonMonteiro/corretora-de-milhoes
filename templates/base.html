@@ -31,10 +31,7 @@
 
   {% if request.resolver_match.app_name == 'painel' %}
   <header class="navbar navbar-painel container">
-    <a href="{% if user.is_authenticated %}{% url 'painel:dashboard' %}{% else %}{% url 'home' %}{% endif %}" class="logo">
-      <img src="{% static 'img/logo-navbar.png' %}" alt="" class="logo-selo">
-      Corretora de Milhões <span class="navbar-tag">painel</span>
-    </a>
+    <a href="{% if user.is_authenticated %}{% url 'painel:dashboard' %}{% else %}{% url 'home' %}{% endif %}" class="logo">Corretora de Milhões <span class="navbar-tag">painel</span></a>
     {% if user.is_authenticated %}
     <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
     <nav>
@@ -54,10 +51,7 @@
   </header>
   {% else %}
   <header class="navbar container">
-    <a href="{% url 'home' %}" class="logo">
-      <img src="{% static 'img/logo-navbar.png' %}" alt="" class="logo-selo">
-      Corretora de Milhões
-    </a>
+    <a href="{% url 'home' %}" class="logo">Corretora de Milhões</a>
     <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false"><span></span></button>
     <nav>
       <a href="{% url 'imoveis:vitrine' %}">Imóveis</a>
