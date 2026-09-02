@@ -1,11 +1,23 @@
 # Keep-alive PROVISÓRIO para o plano gratuito do Render.
 #
-# O que faz: acessa o site a cada 15 min (6h-20h, horário de Brasília) só
-# pra gerar tráfego e evitar o "spin down" do Render free tier (que hiberna
-# a instância depois de ~15 min sem nenhum acesso, deixando a próxima
-# pessoa esperar ~30s pra carregar). Fora desse horário não roda, pra não
-# estourar a cota gratuita do GitHub Actions (repositório privado = 2.000
-# min/mês grátis; essa janela consome ~1.800/mês, com folga).
+# O que faz: acessa o site periodicamente, das 7h às 21h (horário de
+# Brasília, UTC-3), só pra gerar tráfego e evitar o "spin down" do Render
+# free tier (que hiberna a instância depois de ~15 min sem nenhum acesso,
+# deixando a próxima pessoa esperar ~30s pra carregar). Fora desse horário
+# não roda — o site fica sujeito a hibernar de madrugada, o que é aceitável
+# (pouquíssimo acesso nesse período).
+#
+# Dois níveis de frequência, calibrados pra caber na cota gratuita do
+# GitHub Actions (repositório privado = 2.000 min/mês):
+#   - 8h-18h (miolo do dia, mais movimento): a cada 13 min  -> ~1.500 min/mês
+#   - 7h-8h e 18h-21h (bordas): a cada 15 min               -> ~480 min/mês
+#   Total: ~1.980 min/mês.
+#
+# Os horários abaixo já estão em UTC (GitHub Actions só agenda em UTC):
+#   11h-20h UTC     = 8h-18h em Brasília (miolo, */13)
+#   10h e 21h-23h UTC = 7h-8h e 18h-21h em Brasília (bordas, */15)
+# Brasil não usa horário de verão atualmente — se isso mudar, os horários
+# aqui precisam ser ajustados em 1h.
 #
 # COMO DESATIVAR quando migrar pro plano pago do Render (que não hiberna):
 #   Opção 1 (recomendada): apague este arquivo e suba a mudança.
@@ -16,7 +28,8 @@ name: keep-alive-render-free
 
 on:
   schedule:
-    - cron: "*/15 9-23 * * *" # 9h-23h UTC = 6h-20h em Brasília (UTC-3)
+    - cron: "*/13 11-20 * * *" # miolo: 8h-18h em Brasília
+    - cron: "*/15 10,21-23 * * *" # bordas: 7h-8h e 18h-21h em Brasília
   workflow_dispatch: {} # permite rodar manualmente pela aba Actions, se quiser testar
 
 jobs:
