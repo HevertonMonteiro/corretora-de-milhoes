@@ -1,0 +1,27 @@
+# Keep-alive PROVISÓRIO para o plano gratuito do Render.
+#
+# O que faz: acessa o site a cada 15 min (6h-20h, horário de Brasília) só
+# pra gerar tráfego e evitar o "spin down" do Render free tier (que hiberna
+# a instância depois de ~15 min sem nenhum acesso, deixando a próxima
+# pessoa esperar ~30s pra carregar). Fora desse horário não roda, pra não
+# estourar a cota gratuita do GitHub Actions (repositório privado = 2.000
+# min/mês grátis; essa janela consome ~1.800/mês, com folga).
+#
+# COMO DESATIVAR quando migrar pro plano pago do Render (que não hiberna):
+#   Opção 1 (recomendada): apague este arquivo e suba a mudança.
+#   Opção 2: GitHub -> aba "Actions" -> "keep-alive-render-free" -> "..." ->
+#            "Disable workflow" (sem precisar mexer no código).
+
+name: keep-alive-render-free
+
+on:
+  schedule:
+    - cron: "*/15 9-23 * * *" # 9h-23h UTC = 6h-20h em Brasília (UTC-3)
+  workflow_dispatch: {} # permite rodar manualmente pela aba Actions, se quiser testar
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Acessar o site
+        run: curl --max-time 60 --silent --output /dev/null --show-error --fail "https://corretora-de-milhoes.onrender.com/" || true
