@@ -1,23 +1,61 @@
-from django.shortcuts import render, redirect
+from django.conf import settings
+from django.core.mail import send_mail
+from django.shortcuts import render
 
 from core.ratelimit import limitar_por_ip
+from perfil.models import PerfilCorretora
 
 from .forms import LeadForm
+
+
+def _enviar_email_notificacao(request, lead):
+    """Avisa a corretora por e-mail sobre o novo contato. Não usa
+    fail_silently=False de propósito — se o e-mail falhar (SMTP não
+    configurado, fora do ar etc.), o cliente não pode ficar sem resposta
+    só por causa disso; o lead já está salvo no painel de qualquer jeito."""
+    perfil = PerfilCorretora.objects.first()
+    destinatario = perfil.email if perfil else ""
+    if not destinatario:
+        return
+
+    linhas = [f"Nome: {lead.nome}", f"Telefone: {lead.telefone}"]
+    if lead.email:
+        linhas.append(f"E-mail: {lead.email}")
+    if lead.imovel_relacionado:
+        link_imovel = request.build_absolute_uri(
+            lead.imovel_relacionado.get_absolute_url()
+        )
+        linhas.append(
+            f"Imóvel: {lead.imovel_relacionado.codigo_referencia} - "
+            f"{lead.imovel_relacionado.titulo}\n{link_imovel}"
+        )
+    if lead.mensagem:
+        linhas.append(f"Mensagem: {lead.mensagem}")
+
+    send_mail(
+        subject=f"Novo contato pelo site — {lead.nome}",
+        message="\n".join(linhas),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[destinatario],
+        fail_silently=True,
+    )
 
 
 @limitar_por_ip("leads_contato", max_tentativas=5, janela_segundos=600)
 def contato(request):
     """Formulário de contato. Salva o lead no banco (histórico/CRM da
-    corretora) e redireciona para o WhatsApp com a mensagem pré-preenchida
-    — o melhor dos dois mundos: ela não perde nenhum contato e ainda
-    responde pelo canal que já usa no dia a dia."""
-    whatsapp_link = None
+    corretora), avisa ela por e-mail e pergunta pro cliente se quer
+    continuar a conversa no WhatsApp (com a mensagem já pronta) — assim
+    a corretora não perde nenhum contato e o cliente ainda tem a opção
+    rápida de falar por WhatsApp na hora."""
     if request.method == "POST":
         form = LeadForm(request.POST)
         if form.is_valid():
             lead = form.save()
-            whatsapp_link = lead.link_whatsapp()
-            return redirect(whatsapp_link)
+            _enviar_email_notificacao(request, lead)
+            return render(request, "leads/sucesso.html", {
+                "whatsapp_link": lead.link_whatsapp(),
+            })
     else:
         form = LeadForm(initial={
             "imovel_relacionado": request.GET.get("imovel"),

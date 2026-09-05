@@ -4,11 +4,11 @@
 <section class="container" style="max-width: 560px;">
   <a href="{% url 'home' %}" class="voltar-link">← Voltar para o início</a>
   <h2>Fale com a corretora</h2>
-  <p>Preencha os dados abaixo e você será redirecionado direto para o WhatsApp com a mensagem pronta.</p>
+  <p>Preencha os dados abaixo — a corretora recebe sua mensagem na hora, e você ainda pode continuar a conversa pelo WhatsApp.</p>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-whatsapp">Continuar no WhatsApp</button>
+    <button type="submit" class="btn btn-primary">Enviar</button>
   </form>
 </section>
 {% endblock %}

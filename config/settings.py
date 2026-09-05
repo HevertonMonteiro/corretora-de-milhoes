@@ -223,3 +223,22 @@ LOGOUT_REDIRECT_URL = "home"
 # A corretora precisa fazer login de novo sempre que fechar o navegador —
 # a sessão não sobrevive ao fechamento (não depende do "lembrar de mim").
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# E-mail: avisa a corretora por e-mail a cada novo contato do formulário do
+# site (veja leads/views.py). Em dev, sem configurar nada, os e-mails só
+# aparecem no terminal (console backend) — em produção usa Gmail via SMTP,
+# com uma "senha de app" gerada na conta Google (veja .env.example).
+EMAIL_BACKEND = env(
+    "EMAIL_BACKEND",
+    default=(
+        "django.core.mail.backends.console.EmailBackend"
+        if DEBUG
+        else "django.core.mail.backends.smtp.EmailBackend"
+    ),
+)
+EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER)

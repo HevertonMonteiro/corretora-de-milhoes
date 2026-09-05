@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container" style="max-width: 560px;">
+  <h2>Mensagem enviada!</h2>
+  <p>Recebemos seus dados e a corretora já foi avisada. Quer adiantar o assunto e já puxar uma conversa no WhatsApp agora, com a mensagem pronta?</p>
+  <p style="margin-top: 24px;">
+    <a class="btn btn-whatsapp" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Sim, iniciar conversa no WhatsApp</a>
+  </p>
+  <p style="margin-top: 16px;">
+    <a href="{% url 'home' %}" class="voltar-link">Não, obrigado — voltar para o início</a>
+  </p>
+</section>
+{% endblock %}
