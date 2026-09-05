@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 <section class="container" style="max-width: 780px;">
@@ -24,4 +25,8 @@
     <button type="submit" class="btn btn-primary">Salvar imóvel</button>
   </form>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/moeda.js' %}" defer></script>
 {% endblock %}

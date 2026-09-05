@@ -18,6 +18,12 @@ class ImovelForm(forms.ModelForm):
         ]
         widgets = {
             "descricao": forms.Textarea(attrs={"rows": 5}),
+            # TextInput (em vez do NumberInput padrão) pra permitir o JS
+            # formatar como "R$ 1.234,56" enquanto a corretora digita — um
+            # <input type="number"> recusaria esse texto.
+            "valor": forms.TextInput(attrs={"inputmode": "decimal", "data-moeda": "true"}),
+            "valor_condominio": forms.TextInput(attrs={"inputmode": "decimal", "data-moeda": "true"}),
+            "valor_iptu": forms.TextInput(attrs={"inputmode": "decimal", "data-moeda": "true"}),
         }
         help_texts = {
             "video_url": (
