@@ -64,11 +64,17 @@ class PerfilCorretora(models.Model):
 
     @property
     def whatsapp_numero_limpo(self):
-        """Só os dígitos do WhatsApp. O link do wa.me quebra se sobrar
-        espaço, "+", parêntese ou traço no meio (ex: corretora digitando
-        "+55 81 99999-9999" em vez de "5581999999999") — normaliza sozinho
-        a cada acesso, então não depende de reeditar o cadastro."""
-        return re.sub(r"\D", "", self.whatsapp or "")
+        """Só os dígitos do WhatsApp, sempre com o código do Brasil (55)
+        na frente. O link do wa.me quebra se sobrar espaço, "+", parêntese
+        ou traço no meio (ex: corretora digitando "+55 81 99999-9999" em
+        vez de "5581999999999"), e também não funciona sem o código do
+        país — se ela digitar só "81999999999" (DDD + número local, sem o
+        55), completa sozinho. Normaliza a cada acesso, então não depende
+        de reeditar o cadastro."""
+        numero = re.sub(r"\D", "", self.whatsapp or "")
+        if numero and not numero.startswith("55") and len(numero) in (10, 11):
+            numero = "55" + numero
+        return numero
 
     @property
     def whatsapp_link(self):
