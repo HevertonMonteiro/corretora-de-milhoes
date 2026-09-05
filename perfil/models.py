@@ -3,6 +3,8 @@ import re
 from django.db import models
 from django.core.exceptions import ValidationError
 
+from core.imagens import redimensionar_imagem
+
 
 class PerfilCorretora(models.Model):
     """Dados públicos da corretora — CRECI, região de atuação, contatos e
@@ -54,6 +56,11 @@ class PerfilCorretora(models.Model):
                 "Já existe um perfil cadastrado. Edite o perfil existente "
                 "em vez de criar um novo."
             )
+
+    def save(self, *args, **kwargs):
+        if self.foto and not self.foto._committed:
+            self.foto = redimensionar_imagem(self.foto)
+        super().save(*args, **kwargs)
 
     @property
     def whatsapp_numero_limpo(self):

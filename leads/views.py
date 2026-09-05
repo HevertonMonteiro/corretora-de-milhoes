@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render
@@ -7,38 +9,46 @@ from perfil.models import PerfilCorretora
 
 from .forms import LeadForm
 
+logger = logging.getLogger(__name__)
+
 
 def _enviar_email_notificacao(request, lead):
-    """Avisa a corretora por e-mail sobre o novo contato. Não usa
-    fail_silently=False de propósito — se o e-mail falhar (SMTP não
-    configurado, fora do ar etc.), o cliente não pode ficar sem resposta
-    só por causa disso; o lead já está salvo no painel de qualquer jeito."""
-    perfil = PerfilCorretora.objects.first()
-    destinatario = perfil.email if perfil else ""
-    if not destinatario:
-        return
+    """Avisa a corretora por e-mail sobre o novo contato. Envolvido num
+    try/except amplo de propósito — se o e-mail falhar por qualquer
+    motivo (SMTP mal configurado, fora do ar, etc.), o cliente não pode
+    ficar sem resposta só por causa disso; o lead já está salvo no painel
+    de qualquer jeito. O fail_silently do Django cobre a maioria dos
+    erros de SMTP, mas o try/except aqui garante que NADA relacionado a
+    e-mail derruba o formulário do cliente."""
+    try:
+        perfil = PerfilCorretora.objects.first()
+        destinatario = perfil.email if perfil else ""
+        if not destinatario:
+            return
 
-    linhas = [f"Nome: {lead.nome}", f"Telefone: {lead.telefone}"]
-    if lead.email:
-        linhas.append(f"E-mail: {lead.email}")
-    if lead.imovel_relacionado:
-        link_imovel = request.build_absolute_uri(
-            lead.imovel_relacionado.get_absolute_url()
-        )
-        linhas.append(
-            f"Imóvel: {lead.imovel_relacionado.codigo_referencia} - "
-            f"{lead.imovel_relacionado.titulo}\n{link_imovel}"
-        )
-    if lead.mensagem:
-        linhas.append(f"Mensagem: {lead.mensagem}")
+        linhas = [f"Nome: {lead.nome}", f"Telefone: {lead.telefone}"]
+        if lead.email:
+            linhas.append(f"E-mail: {lead.email}")
+        if lead.imovel_relacionado:
+            link_imovel = request.build_absolute_uri(
+                lead.imovel_relacionado.get_absolute_url()
+            )
+            linhas.append(
+                f"Imóvel: {lead.imovel_relacionado.codigo_referencia} - "
+                f"{lead.imovel_relacionado.titulo}\n{link_imovel}"
+            )
+        if lead.mensagem:
+            linhas.append(f"Mensagem: {lead.mensagem}")
 
-    send_mail(
-        subject=f"Novo contato pelo site — {lead.nome}",
-        message="\n".join(linhas),
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[destinatario],
-        fail_silently=True,
-    )
+        send_mail(
+            subject=f"Novo contato pelo site — {lead.nome}",
+            message="\n".join(linhas),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[destinatario],
+            fail_silently=True,
+        )
+    except Exception:
+        logger.exception("Falha ao enviar e-mail de notificação de lead")
 
 
 @limitar_por_ip("leads_contato", max_tentativas=5, janela_segundos=600)

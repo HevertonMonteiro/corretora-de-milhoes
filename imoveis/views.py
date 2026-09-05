@@ -6,7 +6,7 @@ from .models import Imovel
 def vitrine(request):
     """Vitrine pública com busca e filtros — a página mais importante do
     site do ponto de vista de quem está procurando imóvel."""
-    imoveis = Imovel.objects.exclude(status=Imovel.Status.INATIVO)
+    imoveis = Imovel.objects.exclude(status=Imovel.Status.INATIVO).prefetch_related("fotos")
 
     tipo_negocio = request.GET.get("tipo_negocio")
     tipo_imovel = request.GET.get("tipo_imovel")

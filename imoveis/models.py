@@ -3,6 +3,8 @@ import re
 from django.db import models
 from django.urls import reverse
 
+from core.imagens import redimensionar_imagem
+
 # Casa qualquer formato de link do YouTube (assistir, compartilhado
 # youtu.be, shorts ou já incorporado) e extrai o ID do vídeo.
 YOUTUBE_ID_RE = re.compile(
@@ -158,6 +160,11 @@ class ImovelFoto(models.Model):
     def __str__(self):
         return f"Foto de {self.imovel.titulo} ({self.ordem})"
 
+    def save(self, *args, **kwargs):
+        if self.imagem and not self.imagem._committed:
+            self.imagem = redimensionar_imagem(self.imagem)
+        super().save(*args, **kwargs)
+
 
 class Realizacao(models.Model):
     """Post de 'negócio fechado' que a corretora publica no próprio site —
@@ -182,3 +189,8 @@ class Realizacao(models.Model):
 
     def __str__(self):
         return self.titulo
+
+    def save(self, *args, **kwargs):
+        if self.foto and not self.foto._committed:
+            self.foto = redimensionar_imagem(self.foto)
+        super().save(*args, **kwargs)
