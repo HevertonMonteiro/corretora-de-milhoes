@@ -243,6 +243,12 @@ EMAIL_BACKEND = env(
 EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
 EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+# Sem isso, uma conexão SMTP que trava (rede instável, Gmail lento pra
+# responder etc.) fica tentando indefinidamente — prendendo a requisição
+# inteira até o gunicorn desistir e matar o processo (WORKER TIMEOUT),
+# derrubando o formulário de contato do cliente por um problema que era
+# só do envio do e-mail.
+EMAIL_TIMEOUT = env.int("EMAIL_TIMEOUT", default=10)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER)
