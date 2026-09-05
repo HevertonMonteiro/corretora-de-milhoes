@@ -17,6 +17,13 @@ def redimensionar_imagem(arquivo, max_dimensao=MAX_DIMENSAO, qualidade=QUALIDADE
     recomprimida como JPEG, pronta pra substituir o arquivo original antes
     de salvar."""
     imagem = Image.open(arquivo)
+    # Pede pro decodificador JPEG já entregar a imagem numa escala menor,
+    # em vez de descomprimir o arquivo inteiro na resolução original só
+    # pra depois reduzir — uma foto de celular moderna (48MP+) pode exigir
+    # bem mais de 100MB de memória só nesse passo, o que derruba o
+    # servidor no plano gratuito do Render (pouca RAM disponível). Não
+    # tem efeito em formatos que não sejam JPEG (é ignorado nesse caso).
+    imagem.draft("RGB", (max_dimensao, max_dimensao))
     # Corrige fotos de celular que vêm giradas (a câmera grava a rotação
     # real só nos metadados EXIF, não no pixel em si).
     imagem = ImageOps.exif_transpose(imagem)
