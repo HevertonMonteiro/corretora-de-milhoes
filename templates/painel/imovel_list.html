@@ -13,9 +13,9 @@
     <tbody>
       {% for imovel in imoveis %}
       <tr>
-        <td>{{ imovel.codigo_referencia }}</td>
-        <td>{{ imovel.titulo }}</td>
-        <td>
+        <td data-label="Ref.">{{ imovel.codigo_referencia }}</td>
+        <td data-label="Título">{{ imovel.titulo }}</td>
+        <td data-label="Status">
           <form method="post" action="{% url 'painel:imovel_status' imovel.pk %}" style="display:inline-flex; gap:6px;">
             {% csrf_token %}
             <select name="status" onchange="this.form.submit()">
@@ -25,8 +25,8 @@
             </select>
           </form>
         </td>
-        <td>R$ {{ imovel.valor }}</td>
-        <td>
+        <td data-label="Valor">R$ {{ imovel.valor }}</td>
+        <td data-label="Ações">
           <a class="btn btn-sm btn-outline" href="{% url 'painel:imovel_edit' imovel.pk %}">Editar</a>
           <a class="btn btn-sm btn-danger" href="{% url 'painel:imovel_delete' imovel.pk %}">Excluir</a>
         </td>

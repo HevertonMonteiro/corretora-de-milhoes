@@ -64,4 +64,19 @@
     );
     contadores.forEach(function (el) { observerContador.observe(el); });
   }
+
+  // Trava o botão de enviar assim que o formulário é submetido — evita
+  // criar/salvar duplicado quando a pessoa clica mais de uma vez enquanto
+  // a página ainda está processando (comum em formulários com upload de
+  // foto, que demoram mais pra responder). Não se aplica ao formulário de
+  // filtros da vitrine, que é enviado via AJAX (sem recarregar a página).
+  document.querySelectorAll("form:not(#form-filtros)").forEach(function (form) {
+    form.addEventListener("submit", function () {
+      var botao = form.querySelector('button[type="submit"]');
+      if (botao && !botao.disabled) {
+        botao.disabled = true;
+        botao.textContent = "Enviando...";
+      }
+    });
+  });
 })();

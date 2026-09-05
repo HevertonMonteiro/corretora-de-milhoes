@@ -518,12 +518,52 @@ table { width: 100%; border-collapse: collapse; margin-top: 16px; }
 table th, table td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--cor-borda); }
 table th { font-family: var(--fonte-titulo); color: var(--cor-grafite); }
 
-/* Em telas estreitas, a tabela rola por dentro em vez de estourar a página */
-.table-responsive {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+.table-responsive { -webkit-overflow-scrolling: touch; }
+
+/* Em telas estreitas, a tabela vira uma lista de cartões empilhados —
+   sem precisar rolar pro lado pra ler as colunas. */
+@media (max-width: 700px) {
+  .table-responsive table,
+  .table-responsive thead,
+  .table-responsive tbody,
+  .table-responsive th,
+  .table-responsive td,
+  .table-responsive tr {
+    display: block;
+    width: 100%;
+  }
+  .table-responsive thead {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .table-responsive tbody tr {
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+  }
+  .table-responsive td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--cor-borda);
+    text-align: right;
+  }
+  .table-responsive td:last-child { border-bottom: none; }
+  .table-responsive td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--cor-texto-suave);
+    text-align: left;
+    flex-shrink: 0;
+  }
+  .table-responsive td:not([data-label])::before { content: none; }
 }
-.table-responsive table { min-width: 560px; }
 
 /* ===== Formulário de fotos do imóvel (painel) ===== */
 .fotos-formset {

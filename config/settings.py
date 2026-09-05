@@ -223,6 +223,10 @@ LOGOUT_REDIRECT_URL = "home"
 # A corretora precisa fazer login de novo sempre que fechar o navegador —
 # a sessão não sobrevive ao fechamento (não depende do "lembrar de mim").
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# E também expira sozinha depois de 8h, mesmo que o navegador fique aberto
+# o dia todo sem fechar — reduz o risco de alguém usar uma sessão
+# esquecida logada num computador que não é só dela.
+SESSION_COOKIE_AGE = 60 * 60 * 8
 
 # E-mail: avisa a corretora por e-mail a cada novo contato do formulário do
 # site (veja leads/views.py). Em dev, sem configurar nada, os e-mails só

@@ -9,11 +9,11 @@
     <tbody>
       {% for lead in leads %}
       <tr>
-        <td>{{ lead.nome }}</td>
-        <td>{{ lead.telefone }}</td>
-        <td>{{ lead.imovel_relacionado|default:"-" }}</td>
-        <td>{{ lead.criado_em|date:"d/m/Y H:i" }}</td>
-        <td>
+        <td data-label="Nome">{{ lead.nome }}</td>
+        <td data-label="Telefone">{{ lead.telefone }}</td>
+        <td data-label="Imóvel">{{ lead.imovel_relacionado|default:"-" }}</td>
+        <td data-label="Data">{{ lead.criado_em|date:"d/m/Y H:i" }}</td>
+        <td data-label="Status">
           <form method="post">
             {% csrf_token %}
             <input type="hidden" name="id" value="{{ lead.id }}">
