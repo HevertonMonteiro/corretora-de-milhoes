@@ -465,16 +465,16 @@ form input:focus, form select:focus, form textarea:focus { outline: none; border
 .social-float a {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
   border-radius: 999px;
   box-shadow: var(--sombra-forte);
   color: #fff;
-  font-weight: 700;
   transition: transform var(--transicao);
 }
 .social-float a:hover { transform: scale(1.06); }
-.social-float a svg { width: 22px; height: 22px; flex-shrink: 0; }
+.social-float a svg { width: 24px; height: 24px; flex-shrink: 0; }
 .social-float .whatsapp-float { background: #25d366; }
 .social-float .instagram-float {
   background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
