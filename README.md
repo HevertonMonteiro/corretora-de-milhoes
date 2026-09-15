@@ -8,11 +8,11 @@
 
 Site completo para uma corretora de imóveis independente: vitrine pública com busca e filtros, painel de autoatendimento (a própria corretora cadastra imóveis, atualiza status e publica negócios fechados, sem depender de desenvolvedor), captação de leads integrada ao WhatsApp e moderação de depoimentos.
 
-Projeto pessoal de portfólio, com deploy real em produção — não é um boilerplate nem um tutorial seguido à risca.
+Projeto pessoal de portfólio, com deploy real em produção. Não é um boilerplate nem um tutorial seguido à risca.
 
 🔗 **[Ver o site no ar](https://corretora-de-milhoes.onrender.com)**
 
-> **Nota sobre o link acima:** o deploy está no plano gratuito do Render. Depois de ~15 minutos sem receber acesso, o serviço "dorme" para economizar recursos — o primeiro carregamento após esse período pode levar de 30 a 50 segundos enquanto a instância acorda. Acessos seguintes voltam a ser instantâneos. Isso é uma característica do plano gratuito de hospedagem, não do código.
+> **Nota sobre o link acima:** o deploy está no plano gratuito do Render. Depois de ~15 minutos sem receber acesso, o serviço "dorme" para economizar recursos. O primeiro carregamento após esse período pode levar de 30 a 50 segundos enquanto a instância acorda. Acessos seguintes voltam a ser instantâneos. Isso é uma característica do plano gratuito de hospedagem, não do código.
 
 ![Home do site](docs/screenshots/home.png)
 
@@ -31,7 +31,7 @@ Por isso o projeto é dividido em duas metades com necessidades bem diferentes:
 - Home com destaques, imóveis em evidência e depoimentos aprovados.
 - Vitrine de imóveis com busca por texto e filtros combinados (tipo de negócio, tipo de imóvel, cidade, bairro, nº de quartos, faixa de valor).
 - Página de detalhe do imóvel: galeria de fotos, vídeo do YouTube incorporado, mapa (Google Maps embed) e botão de interesse.
-- Formulário de contato: salva o lead no banco (histórico da corretora) **e** redireciona o visitante pro WhatsApp com a mensagem já preenchida — nenhum contato se perde, mesmo se o e-mail de notificação falhar.
+- Formulário de contato: salva o lead no banco (histórico da corretora) **e** redireciona o visitante pro WhatsApp com a mensagem já preenchida. Nenhum contato se perde, mesmo se o e-mail de notificação falhar.
 - Envio de depoimentos por clientes, com moderação antes de aparecer no site.
 
 **Painel da corretora** (autenticado)
@@ -56,7 +56,7 @@ Alguns problemas reais de produção resolvidos ao longo do projeto (não só "f
 
 | Camada | Tecnologia | Por quê |
 |---|---|---|
-| Back-end | Python + Django 5 | Admin, autenticação e ORM prontos — acelera o painel administrativo (a parte mais trabalhosa) sem precisar de API + front separados. |
+| Back-end | Python + Django 5 | Admin, autenticação e ORM prontos. Acelera o painel administrativo (a parte mais trabalhosa) sem precisar de API + front separados. |
 | Banco de dados | SQLite (dev) → PostgreSQL via Supabase (produção) | Troca automática por `DATABASE_URL`, zero configuração em desenvolvimento. |
 | Armazenamento de mídia | Supabase Storage (S3-compatible) via `django-storages` | Disco do Render é efêmero; fotos precisam de armazenamento persistente. |
 | Servidor de produção | Gunicorn + WhiteNoise | Serve estáticos comprimidos direto da aplicação, sem depender de Nginx/CDN. |
@@ -85,7 +85,7 @@ python manage.py test
 |---|---|
 | `imoveis` | Modelo central: `Imovel`, `ImovelFoto`, `Realizacao`. Vitrine pública com busca/filtros e página de detalhe. |
 | `perfil` | Dados da corretora (singleton): nome, CRECI, bio, WhatsApp, redes sociais, localização do escritório. |
-| `depoimentos` | Feedback de clientes, pendente de aprovação no painel — evita spam/reviews falsos. |
+| `depoimentos` | Feedback de clientes, pendente de aprovação no painel. Evita spam/reviews falsos. |
 | `leads` | Toda submissão do formulário de contato vira um registro aqui (mini-CRM) antes de redirecionar pro WhatsApp. |
 | `painel` | Área autenticada: dashboard, CRUD de imóveis, troca de status, publicação de negócios fechados, moderação de depoimentos, leads. |
 | `core` | Home pública e o `context_processor` que injeta os dados da corretora em todo template (navbar, rodapé, botão de WhatsApp flutuante). |
@@ -111,7 +111,7 @@ Imovel
 ImovelFoto  (N:1 com Imovel)
   imovel_id, imagem, legenda, ordem
 
-Realizacao  (N:1 opcional com Imovel — "negócio fechado")
+Realizacao  (N:1 opcional com Imovel, "negócio fechado")
   imovel_id (nullable), titulo, texto, foto, publicado_em, visivel
 
 Depoimento  (N:1 opcional com Imovel)
@@ -123,7 +123,7 @@ Lead  (N:1 opcional com Imovel)
   imovel_relacionado_id, atendido, criado_em
 ```
 
-Relacionamentos com `Imovel` usam `on_delete=SET_NULL` (exceto as fotos, que são `CASCADE`) — excluir um imóvel não apaga o histórico de leads/depoimentos/realizações ligados a ele.
+Relacionamentos com `Imovel` usam `on_delete=SET_NULL` (exceto as fotos, que são `CASCADE`). Excluir um imóvel não apaga o histórico de leads/depoimentos/realizações ligados a ele.
 
 ## Rodando localmente
 
@@ -147,7 +147,7 @@ Antes de qualquer coisa aparecer na vitrine, cadastre o `PerfilCorretora` (pelo 
 
 ## Deploy
 
-Configurado como [Blueprint do Render](render.yaml) — no dashboard, "New > Blueprint" apontando para este repositório recria o serviço inteiro (build, variáveis de ambiente, banco). Push na `master` dispara deploy automático. Detalhes de cada variável de ambiente em [`.env.example`](.env.example).
+Configurado como [Blueprint do Render](render.yaml). No dashboard, "New > Blueprint" apontando para este repositório recria o serviço inteiro (build, variáveis de ambiente, banco). Push na `master` dispara deploy automático. Detalhes de cada variável de ambiente em [`.env.example`](.env.example).
 
 ## Roadmap
 
