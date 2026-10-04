@@ -1,17 +1,27 @@
+import uuid
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
+from django.core.files.storage import default_storage
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_POST
 
+from core.imagens import redimensionar_imagem
 from core.ratelimit import limitar_por_ip
 from imoveis.models import Imovel, Realizacao
 from depoimentos.models import Depoimento
 from leads.models import Lead
 from perfil.models import PerfilCorretora
 
+from .campos import PASTAS_PERMITIDAS
 from .forms import ImovelForm, ImovelFotoFormSet, RealizacaoForm, PerfilForm
+
+TAMANHO_MAXIMO_UPLOAD = 4 * 1024 * 1024
 
 
 @method_decorator(
@@ -24,6 +34,26 @@ class PainelLoginView(LoginView):
 
 class PainelLogoutView(LogoutView):
     next_page = "painel:login"
+
+
+@login_required
+@require_POST
+def upload_imagem(request):
+    pasta = request.POST.get("pasta", "")
+    arquivo = request.FILES.get("arquivo")
+    if pasta not in PASTAS_PERMITIDAS or arquivo is None:
+        return JsonResponse({"erro": "Envio inválido."}, status=400)
+    if arquivo.size > TAMANHO_MAXIMO_UPLOAD:
+        return JsonResponse({"erro": "A foto é muito grande."}, status=413)
+    try:
+        conteudo = redimensionar_imagem(arquivo)
+    except (OSError, ValueError):
+        return JsonResponse({"erro": "O arquivo enviado não é uma imagem válida."}, status=400)
+
+    agora = timezone.now()
+    nome = f"{pasta}/{agora:%Y/%m}/{uuid.uuid4().hex}.jpg"
+    caminho = default_storage.save(nome, conteudo)
+    return JsonResponse({"caminho": caminho})
 
 
 @login_required

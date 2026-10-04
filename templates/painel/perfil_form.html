@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 <section class="container" style="max-width: 720px;">
@@ -14,4 +15,8 @@
     <button type="submit" class="btn btn-primary">Salvar perfil</button>
   </form>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/upload-foto.js' %}" defer></script>
 {% endblock %}

@@ -8,6 +8,7 @@ urlpatterns = [
     path("login/", views.PainelLoginView.as_view(), name="login"),
     path("logout/", views.PainelLogoutView.as_view(), name="logout"),
     path("", views.dashboard, name="dashboard"),
+    path("upload/imagem/", views.upload_imagem, name="upload_imagem"),
     path("imoveis/", views.imovel_list, name="imovel_list"),
     path("imoveis/novo/", views.imovel_form, name="imovel_create"),
     path("imoveis/<int:pk>/editar/", views.imovel_form, name="imovel_edit"),

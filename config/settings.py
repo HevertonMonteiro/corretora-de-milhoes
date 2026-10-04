@@ -41,6 +41,13 @@ RENDER_EXTERNAL_URL = env("RENDER_EXTERNAL_URL", default="")
 if RENDER_EXTERNAL_URL and RENDER_EXTERNAL_URL not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append(RENDER_EXTERNAL_URL)
 
+# Na Vercel, a Vercel injeta VERCEL_URL (URL única de cada deploy) e
+# VERCEL_PROJECT_PRODUCTION_URL (domínio de produção), sem protocolo.
+for _host_vercel in (env("VERCEL_URL", default=""), env("VERCEL_PROJECT_PRODUCTION_URL", default="")):
+    if _host_vercel and _host_vercel not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(_host_vercel)
+        CSRF_TRUSTED_ORIGINS.append(f"https://{_host_vercel}")
+
 if not DEBUG:
     # O Render fica atrás de um proxy que termina o HTTPS antes da aplicação —
     # sem isso o Django acha que a conexão é HTTP e quebra o redirect/CSRF.

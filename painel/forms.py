@@ -4,6 +4,8 @@ from django.forms import inlineformset_factory
 from imoveis.models import YOUTUBE_ID_RE, Imovel, ImovelFoto, Realizacao
 from perfil.models import PerfilCorretora
 
+from .campos import CaminhoImagemField
+
 
 MAX_FOTOS_POR_IMOVEL = 9
 
@@ -47,11 +49,20 @@ class ImovelForm(forms.ModelForm):
         return url
 
 
+class ImovelFotoForm(forms.ModelForm):
+    imagem = CaminhoImagemField(pasta="imoveis")
+
+    class Meta:
+        model = ImovelFoto
+        fields = ["imagem", "titulo", "ordem"]
+
+
 # Formset para a corretora subir várias fotos do imóvel de uma vez só.
 # max_num/validate_max travam o limite em 9 fotos por imóvel.
 ImovelFotoFormSet = inlineformset_factory(
     Imovel,
     ImovelFoto,
+    form=ImovelFotoForm,
     fields=["imagem", "titulo", "ordem"],
     extra=MAX_FOTOS_POR_IMOVEL,
     max_num=MAX_FOTOS_POR_IMOVEL,
@@ -61,6 +72,8 @@ ImovelFotoFormSet = inlineformset_factory(
 
 
 class RealizacaoForm(forms.ModelForm):
+    foto = CaminhoImagemField(pasta="realizacoes", required=True, label="Foto")
+
     class Meta:
         model = Realizacao
         fields = ["imovel", "titulo", "texto", "foto", "visivel"]
@@ -70,6 +83,8 @@ class RealizacaoForm(forms.ModelForm):
 
 
 class PerfilForm(forms.ModelForm):
+    foto = CaminhoImagemField(pasta="perfil", required=False, label="Foto")
+
     class Meta:
         model = PerfilCorretora
         # facebook_url fica de fora — a corretora não usa Facebook no site.
