@@ -4,7 +4,7 @@ from config.wsgi import application as _app
 
 
 def app(environ, start_response):
-    if environ.get("QUERY_STRING") == "diagnostico=1":
+    if environ.get("PATH_INFO", "").startswith("/diagnostico-ambiente"):
         dados = {
             k: str(v)
             for k, v in environ.items()
