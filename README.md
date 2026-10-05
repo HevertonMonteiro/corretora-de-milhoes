@@ -3,16 +3,14 @@
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![Django](https://img.shields.io/badge/Django-5.2-092E20?logo=django&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-336791?logo=postgresql&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-21%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-32%20passing-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 Site completo para uma corretora de imóveis independente: vitrine pública com busca e filtros, painel de autoatendimento (a própria corretora cadastra imóveis, atualiza status e publica negócios fechados, sem depender de desenvolvedor), captação de leads integrada ao WhatsApp e moderação de depoimentos.
 
 Projeto pessoal de portfólio, com deploy real em produção. Não é um boilerplate nem um tutorial seguido à risca.
 
-🔗 **[Ver o site no ar](https://corretora-de-milhoes.onrender.com)**
-
-> **Nota sobre o link acima:** o deploy está no plano gratuito do Render. Depois de ~15 minutos sem receber acesso, o serviço "dorme" para economizar recursos. O primeiro carregamento após esse período pode levar de 30 a 50 segundos enquanto a instância acorda. Acessos seguintes voltam a ser instantâneos. Isso é uma característica do plano gratuito de hospedagem, não do código.
+🔗 **[Ver o site no ar](https://corretora-de-milhoes.vercel.app)**
 
 ![Home do site](docs/screenshots/home.png)
 
@@ -46,10 +44,10 @@ Por isso o projeto é dividido em duas metades com necessidades bem diferentes:
 
 Alguns problemas reais de produção resolvidos ao longo do projeto (não só "features"):
 
-- **Upload de fotos sem estourar memória** — o processamento de imagem foi ajustado para redimensionar no momento do upload em vez de guardar o arquivo original inteiro, evitando que o worker do Gunicorn fosse morto por falta de memória (OOM) no plano gratuito do Render.
+- **Upload de fotos dentro dos limites da Vercel** — o navegador reduz cada foto (1920 px, JPEG) antes de enviar, e cada foto segue separada para o servidor, que valida e salva no storage. Assim nenhuma requisição passa do limite de tamanho das funções serverless, sem perda visível de qualidade.
 - **Formulário de contato blindado contra timeout de e-mail** — o envio de e-mail de notificação roda com timeout e captura de exceção isolados: se o SMTP travar ou falhar, o lead do cliente é salvo normalmente e a página de sucesso carrega do mesmo jeito.
 - **Rate limiting sem infraestrutura extra** — limite de tentativas por IP no login do painel e no formulário público de contato, usando só o cache padrão do Django (sem Redis/serviço externo).
-- **Armazenamento de mídia persistente** — como o disco do Render é apagado a cada deploy, as fotos dos imóveis vão para o Supabase Storage (S3-compatible) em produção; em desenvolvimento, caem no disco local automaticamente, sem precisar configurar nada.
+- **Armazenamento de mídia persistente** — como as funções serverless não guardam arquivos entre execuções, as fotos dos imóveis vão para o Supabase Storage (S3-compatible) em produção; em desenvolvimento, caem no disco local automaticamente, sem precisar configurar nada.
 - **Hardening de produção** — HTTPS forçado, cookies de sessão/CSRF seguros, HSTS, sessão expirando em 8h e ao fechar o navegador, tudo condicionado a `DEBUG=False` para não atrapalhar o desenvolvimento local.
 
 ## Stack
@@ -58,11 +56,11 @@ Alguns problemas reais de produção resolvidos ao longo do projeto (não só "f
 |---|---|---|
 | Back-end | Python + Django 5 | Admin, autenticação e ORM prontos. Acelera o painel administrativo (a parte mais trabalhosa) sem precisar de API + front separados. |
 | Banco de dados | SQLite (dev) → PostgreSQL via Supabase (produção) | Troca automática por `DATABASE_URL`, zero configuração em desenvolvimento. |
-| Armazenamento de mídia | Supabase Storage (S3-compatible) via `django-storages` | Disco do Render é efêmero; fotos precisam de armazenamento persistente. |
-| Servidor de produção | Gunicorn + WhiteNoise | Serve estáticos comprimidos direto da aplicação, sem depender de Nginx/CDN. |
+| Armazenamento de mídia | Supabase Storage (S3-compatible) via `django-storages` | Funções serverless não mantêm arquivos; fotos precisam de armazenamento persistente. |
+| Servidor de produção | Vercel (runtime Python) + WhiteNoise | Roda o Django como função serverless e serve os estáticos comprimidos direto da aplicação. |
 | Config/segredos | `django-environ` | Variáveis sensíveis fora do código-fonte. |
-| Deploy | Render (Blueprint via `render.yaml`) | Deploy automático a cada push na `master`. |
-| Testes | `django.test` (unittest) | 21 testes cobrindo os fluxos principais das 5 apps. |
+| Deploy | Vercel | Deploy de produção a cada push na `master` e preview para cada outro branch. |
+| Testes | `django.test` (unittest) | 32 testes cobrindo os fluxos principais das 6 apps. |
 | Front-end | Templates Django + CSS puro | Suficiente para o escopo atual; migrável para Tailwind/HTMX sem tocar no back-end. |
 
 ## Testes automatizados
@@ -71,7 +69,7 @@ Alguns problemas reais de produção resolvidos ao longo do projeto (não só "f
 python manage.py test
 ```
 
-21 testes cobrindo os fluxos de cada app (cadastro/edição de imóvel, formulário de contato, moderação de depoimentos, autenticação do painel, etc.).
+32 testes cobrindo os fluxos de cada app (cadastro/edição de imóvel, formulário de contato, moderação de depoimentos, autenticação do painel, etc.).
 
 ## Screenshots
 
@@ -147,7 +145,7 @@ Antes de qualquer coisa aparecer na vitrine, cadastre o `PerfilCorretora` (pelo 
 
 ## Deploy
 
-Configurado como [Blueprint do Render](render.yaml). No dashboard, "New > Blueprint" apontando para este repositório recria o serviço inteiro (build, variáveis de ambiente, banco). Push na `master` dispara deploy automático. Detalhes de cada variável de ambiente em [`.env.example`](.env.example).
+Hospedado na [Vercel](https://vercel.com), ligado a este repositório. Cada push na `master` gera um deploy de produção, e cada outro branch gera um preview. As variáveis de ambiente ficam em Settings > Environment Variables do projeto; a lista e o significado de cada uma estão em [`.env.example`](.env.example).
 
 ## Roadmap
 

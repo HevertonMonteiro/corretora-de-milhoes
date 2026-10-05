@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 class Command(BaseCommand):
     """Cria a conta única da corretora a partir de variáveis de ambiente.
 
-    Pensado para rodar no build do Render (sem shell interativo, que só
+    Pensado para rodar no build da Vercel (sem shell interativo, que só
     existe nos planos pagos): lê DJANGO_SUPERUSER_USERNAME/EMAIL/PASSWORD
     e só cria o usuário se ele ainda não existir, então é seguro deixar
     esse comando em todo deploy. Não expõe nenhuma rota nem formulário —

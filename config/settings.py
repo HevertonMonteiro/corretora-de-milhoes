@@ -31,16 +31,6 @@ DEBUG = env.bool("DEBUG", default=True)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
-# O Render injeta essa variável sozinho (não precisa configurar no
-# dashboard) com a URL pública do serviço, ex: https://corretora-de-milhoes.
-# onrender.com. Adicionamos automaticamente aos CSRF_TRUSTED_ORIGINS pra não
-# depender de lembrar de preencher CSRF_TRUSTED_ORIGINS na mão — sem isso o
-# Django rejeita os POSTs do painel (login, cadastro de imóvel etc.) com
-# "Verificação CSRF falhou".
-RENDER_EXTERNAL_URL = env("RENDER_EXTERNAL_URL", default="")
-if RENDER_EXTERNAL_URL and RENDER_EXTERNAL_URL not in CSRF_TRUSTED_ORIGINS:
-    CSRF_TRUSTED_ORIGINS.append(RENDER_EXTERNAL_URL)
-
 # Na Vercel, a Vercel injeta VERCEL_URL (URL única de cada deploy),
 # VERCEL_BRANCH_URL (alias do branch) e VERCEL_PROJECT_PRODUCTION_URL
 # (domínio de produção), todas sem protocolo.
@@ -54,7 +44,7 @@ for _host_vercel in (
         CSRF_TRUSTED_ORIGINS.append(f"https://{_host_vercel}")
 
 if not DEBUG:
-    # O Render fica atrás de um proxy que termina o HTTPS antes da aplicação —
+    # A Vercel fica atrás de um proxy que termina o HTTPS antes da aplicação —
     # sem isso o Django acha que a conexão é HTTP e quebra o redirect/CSRF.
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = True
@@ -175,7 +165,7 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # Em dev, mídia fica em MEDIA_ROOT (disco local) sem precisar configurar nada.
-# Em produção, o disco do Render é temporário — definir as variáveis
+# Em produção, o disco das funções serverless é temporário — definir as variáveis
 # SUPABASE_STORAGE_* (veja .env.example) muda o armazenamento das fotos para
 # o Supabase Storage (compatível com S3), que é persistente.
 SUPABASE_STORAGE_BUCKET = env("SUPABASE_STORAGE_BUCKET", default="")
