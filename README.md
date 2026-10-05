@@ -3,7 +3,7 @@
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![Django](https://img.shields.io/badge/Django-5.2-092E20?logo=django&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-336791?logo=postgresql&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-34%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-36%20passing-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 Site completo para uma corretora de imóveis independente: vitrine pública com busca e filtros, painel de autoatendimento (a própria corretora cadastra imóveis, atualiza status e publica negócios fechados, sem depender de desenvolvedor), captação de leads integrada ao WhatsApp e moderação de depoimentos.
@@ -60,7 +60,7 @@ Alguns problemas reais de produção resolvidos ao longo do projeto (não só "f
 | Servidor de produção | Vercel (runtime Python) + WhiteNoise | Roda o Django como função serverless e serve os estáticos comprimidos direto da aplicação. |
 | Config/segredos | `django-environ` | Variáveis sensíveis fora do código-fonte. |
 | Deploy | Vercel | Deploy de produção a cada push na `master` e preview para cada outro branch. |
-| Testes | `django.test` (unittest) | 34 testes cobrindo os fluxos principais das 6 apps. |
+| Testes | `django.test` (unittest) | 36 testes cobrindo os fluxos principais das 6 apps. |
 | Front-end | Templates Django + CSS puro | Suficiente para o escopo atual; migrável para Tailwind/HTMX sem tocar no back-end. |
 
 ## Testes automatizados
@@ -69,7 +69,7 @@ Alguns problemas reais de produção resolvidos ao longo do projeto (não só "f
 python manage.py test
 ```
 
-34 testes cobrindo os fluxos de cada app (cadastro/edição de imóvel, formulário de contato, moderação de depoimentos, autenticação do painel, etc.).
+36 testes cobrindo os fluxos de cada app (cadastro/edição de imóvel, formulário de contato, moderação de depoimentos, autenticação do painel, etc.).
 
 ## Screenshots
 
