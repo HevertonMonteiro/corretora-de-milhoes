@@ -1,6 +1,9 @@
 import re
 
-from django.db import models
+from django.core.files.storage import default_storage
+from django.db import models, transaction
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from django.urls import reverse
 
 from core.imagens import redimensionar_imagem
@@ -163,7 +166,24 @@ class ImovelFoto(models.Model):
     def save(self, *args, **kwargs):
         if self.imagem and not self.imagem._committed:
             self.imagem = redimensionar_imagem(self.imagem)
+        caminho_anterior = None
+        if self.pk:
+            caminho_anterior = (
+                ImovelFoto.objects.filter(pk=self.pk).values_list("imagem", flat=True).first()
+            )
         super().save(*args, **kwargs)
+        if caminho_anterior and caminho_anterior != self.imagem.name:
+            _apagar_arquivo_depois_do_commit(caminho_anterior)
+
+
+def _apagar_arquivo_depois_do_commit(caminho):
+    transaction.on_commit(lambda: default_storage.delete(caminho))
+
+
+@receiver(post_delete, sender=ImovelFoto)
+def apagar_arquivo_da_foto_excluida(sender, instance, **kwargs):
+    if instance.imagem:
+        _apagar_arquivo_depois_do_commit(instance.imagem.name)
 
 
 class Realizacao(models.Model):
